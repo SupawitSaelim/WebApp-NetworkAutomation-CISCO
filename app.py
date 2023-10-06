@@ -35,6 +35,7 @@ def ssh():
         try:
             # Establish SSH connection
             ssh_client.connect(ip_address, port=22, username=ssh_username, password=ssh_password, allow_agent=False, look_for_keys=False)
+            time.sleep(5)
             print("Successfully connected to " + ip_address)
 
 
