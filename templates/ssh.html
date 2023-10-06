@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SSH Connection</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Input IP Device</h1>
+        <form method="POST" action="/ssh">
+            <input type="text" id="ip_address" name="ip_address" placeholder="IP address" required>
+            <br>
+            <input type="text" id="ssh_username" name="ssh_username" placeholder="SSH username" required>
+            <br>
+            <input type="password" id="ssh_password" name="ssh_password" placeholder="SSH password" required>
+            <br>
+            <input type="text" id="hostname" name="hostname" placeholder="hostname" >
+            <br>
+            <input type="submit" value="Connect">
+            <br><br>
+        </form>
+
+        {% if alert %}
+        <div class="alert alert-danger" style="text-align: center;">
+            {{ alert }}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
