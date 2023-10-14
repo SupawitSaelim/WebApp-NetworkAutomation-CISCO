@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash   
 import json
 import os
 from netmiko import ConnectHandler
@@ -90,17 +90,34 @@ def configure():
     if request.method == 'POST':
         device_name = request.form.get('device_name')
         hostname = request.form.get('hostname')
-        if hostname != '':
-            for device in cisco_devices:
-                if device['name'] == device_name:
-                    device_info = device['device_info']
-                    net_connect = ConnectHandler(**device_info)
-                    net_connect.enable()
-                    output = net_connect.send_config_set(['hostname ' + hostname])
-                    print(output)
-                    net_connect.disconnect()
+        secret_password = request.form.get('secret_password')
 
-        return redirect(url_for('basic_edit'))
+        try:
+            if hostname != '':
+                for device in cisco_devices:
+                    if device['name'] == device_name:
+                        device_info = device['device_info']
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['hostname ' + hostname])
+                        print(output)
+                        net_connect.disconnect()
+
+            if secret_password != '':
+                for device in cisco_devices:
+                    if device['name'] == device_name:
+                        device_info = device['device_info']
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['enable secret ' + secret_password])
+                        print(output)
+                        net_connect.disconnect()
+            return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
+        except Exception as e:
+            print(e)
+            return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
+            
+
 
 
 
