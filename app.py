@@ -6,6 +6,8 @@ import paramiko
 
 app = Flask(__name__, template_folder='templates')
 
+app.secret_key = 'Supawitadmin123_'
+
 json_file_path = 'cisco_device.json'
 cisco_devices = []
 
@@ -101,8 +103,7 @@ def configure():
                     ip = device_info['ip']
 
                     if not is_ssh_reachable(ip, device_info['username'], device_info['password']):
-                        flash(f"SSH connection to {ip} failed. Make sure SSH is enabled and credentials are correct.", 'error')
-                        return redirect(url_for('basic_edit'))
+                        return '<script>alert("SSH connection failed. Make sure SSH is enabled and credentials are correct."); window.location.href="/basicedit";</script>'
 
                     if hostname:
                         net_connect = ConnectHandler(**device_info)
