@@ -91,13 +91,17 @@ def configure():
         device_name = request.form.get('device_name')
         hostname = request.form.get('hostname')
         if hostname != '':
-            net_connect = ConnectHandler(**cisco_devices[device_name]['device_info'])
-            net_connect.enable()
-            output = net_connect.send_config_set(['hostname ' + hostname])
-            print(output)
-            net_connect.disconnect()
+            for device in cisco_devices:
+                if device['name'] == device_name:
+                    device_info = device['device_info']
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['hostname ' + hostname])
+                    print(output)
+                    net_connect.disconnect()
 
         return redirect(url_for('basic_edit'))
+
 
 
 
