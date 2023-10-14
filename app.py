@@ -127,7 +127,6 @@ def configure():
             return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
         except Exception as e:
             print(e)
-            flash("Something went wrong. Please try again.", 'error')
             return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
 
 
