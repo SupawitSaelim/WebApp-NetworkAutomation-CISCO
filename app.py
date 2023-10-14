@@ -112,6 +112,10 @@ def configure():
                         output = net_connect.send_config_set(['enable secret ' + secret_password])
                         print(output)
                         net_connect.disconnect()
+                        device['device_info']['secret'] = secret_password
+
+            with open(json_file_path, 'w') as f:
+                json.dump(cisco_devices, f, indent=4)
             return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
         except Exception as e:
             print(e)
