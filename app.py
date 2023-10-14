@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import json
 import os
 from netmiko import ConnectHandler
+import paramiko
 
 app = Flask(__name__, template_folder='templates')
 
@@ -85,6 +86,7 @@ def delete_device():
 def basic_edit():
     return render_template('basicedit.html', cisco_devices=cisco_devices)
 
+
 @app.route('/configure', methods=['POST'])
 def configure():
     if request.method == 'POST':
@@ -93,37 +95,54 @@ def configure():
         secret_password = request.form.get('secret_password')
 
         try:
-            if hostname != '':
-                for device in cisco_devices:
-                    if device['name'] == device_name:
-                        device_info = device['device_info']
+            for device in cisco_devices:
+                if device['name'] == device_name:
+                    device_info = device['device_info']
+                    ip = device_info['ip']
+
+                    if not is_ssh_reachable(ip, device_info['username'], device_info['password']):
+                        flash(f"SSH connection to {ip} failed. Make sure SSH is enabled and credentials are correct.", 'error')
+                        return redirect(url_for('basic_edit'))
+
+                    if hostname:
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
                         output = net_connect.send_config_set(['hostname ' + hostname])
                         print(output)
                         net_connect.disconnect()
+                        device['name'] = hostname
 
-            if secret_password != '':
-                for device in cisco_devices:
-                    if device['name'] == device_name:
-                        device_info = device['device_info']
+                    if secret_password:
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
                         output = net_connect.send_config_set(['enable secret ' + secret_password])
                         print(output)
                         net_connect.disconnect()
+
                         device['device_info']['secret'] = secret_password
 
             with open(json_file_path, 'w') as f:
                 json.dump(cisco_devices, f, indent=4)
-            return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
+
+            flash("Configuration successful!", 'success')
+            return redirect(url_for('basic_edit'))
         except Exception as e:
             print(e)
-            return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
-            
+            flash("Something went wrong. Please try again.", 'error')
+            return redirect(url_for('basic_edit'))
 
 
 
+def is_ssh_reachable(ip, username, password):
+    try:
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(ip, username=username, password=password, timeout=5)
+        ssh_client.close()
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
 
 
@@ -131,3 +150,7 @@ def configure():
     
 if __name__ == '__main__':
     app.run(debug=True)
+
+'<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
+
+'<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
