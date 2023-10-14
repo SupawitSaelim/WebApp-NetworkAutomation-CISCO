@@ -124,12 +124,11 @@ def configure():
             with open(json_file_path, 'w') as f:
                 json.dump(cisco_devices, f, indent=4)
 
-            flash("Configuration successful!", 'success')
-            return redirect(url_for('basic_edit'))
+            return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
         except Exception as e:
             print(e)
             flash("Something went wrong. Please try again.", 'error')
-            return redirect(url_for('basic_edit'))
+            return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
 
 
 
@@ -151,6 +150,3 @@ def is_ssh_reachable(ip, username, password):
 if __name__ == '__main__':
     app.run(debug=True)
 
-'<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
-
-'<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
