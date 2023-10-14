@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Configurations</title>
+    <style>
+        .input-container {
+            display: flex;
+            align-items: flex-start; 
+        }
+        .input-container input[type="text"],
+        .input-container input[type="password"] {
+            flex: 1;
+            margin-right: 10px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="top_navbar">
+            <div class="hamburger">
+            </div>
+            <div class="top_menu">
+            <div class="logo">
+                <img src="../static/cisco-logo-transparent-free-png.webp" style="width: 7%;;" alt="">
+            </div>
+            <ul>
+                <li><a href="index"><h4>Refresh</h4></a></li>
+                <form method="POST" action="/logout">
+                    <button type="submit" style="color: #2e4ead;padding: 7px 20px;border: none;border-radius: 5px;background-color:white;font-size:16px;cursor: pointer;font-weight:bold;" onmouseover="this.style.color='midnightblue';" onmouseout="this.style.color='#2e4ead';">Logout</button>
+                </form>
+            </ul>
+            </div>
+        </div>
+        <div class="sidebar">
+            <ul><br>
+                <li><a href="index">
+                <span class="icon"><i class="fas fa-book"></i></span>
+                <span class="title">Add device</span>
+                </a></li>
+                <li><a href="devices">
+                <span class="icon"><i class="fas fa-file-video"></i></span>
+                <span class="title">Devices</span>
+                </a></li>
+                <li><a href="basicedit" class="active">
+                <span class="icon"><i class="fas fa-cogs"></i></span>
+                <span class="title">Basic Configurations</span>
+                </a></li>
+                <li><a href="#">
+                <span class="icon"><i class="fas fa-blog"></i></span>
+                <span class="title">Blogs</span>
+                </a></li>
+                <li><a href="#">
+                <span class="icon"><i class="fas fa-leaf"></i></span>
+                <span class="title">Nature</span>
+                </a></li>
+            </ul>
+        </div>
+        <div class="main_container">
+            <div class="container">
+                <h1 style="text-align: center;color: #2e4ead;">BASIC CONFIGURATIONS</h1><br><br>
+                <form method="POST" action="/configure">
+                    <select name="device_name" required>
+                        <option value="" disabled selected>Select a device</option>
+                        {% for device in cisco_devices %}
+                            <option value="{{ device.name }}">{{ device.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br><br>
+                    <input type="text" name="hostname" placeholder="Hostname" min="2" maxlength="15">
+                    <input style="margin-left: 90%;" type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+        </div>
+    </body>
+</html>
