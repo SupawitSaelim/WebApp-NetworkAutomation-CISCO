@@ -95,6 +95,13 @@ def configure():
         device_name = request.form.get('device_name')
         hostname = request.form.get('hostname')
         secret_password = request.form.get('secret_password')
+        new_username = request.form.get('new_username')
+        new_password = request.form.get('new_password')
+        level_privilege = request.form.get('level_pri')
+        service_password_encryption = request.form.get('password_encryption')
+        enable_snmp = request.form.get('enable_snmp')
+        save_config = request.form.get('save_config')
+        default_gateway = request.form.get('default_gateway')
 
         try:
             for device in cisco_devices:
@@ -121,6 +128,46 @@ def configure():
                         net_connect.disconnect()
 
                         device['device_info']['secret'] = secret_password
+                    
+                    if default_gateway:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['ip default-gateway ' + default_gateway])
+                        print(output)
+                        net_connect.disconnect()
+
+                    if new_username and new_password and level_privilege:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
+                        print(output)
+                        net_connect.disconnect()
+
+                    if service_password_encryption == "enable":
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['service password-encryption'])
+                        print(output)
+                        net_connect.disconnect()
+
+                    if enable_snmp == "enable":
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['snmp-server community public RO'])
+                        print(output)
+                        net_connect.disconnect()
+                    
+                    if save_config == "enable":
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command_timing('write')
+                        if 'confirm' in output:
+                            output += net_connect.send_command_timing('')
+                        print(output)
+                        net_connect.disconnect()
+                        
+
+
 
             with open(json_file_path, 'w') as f:
                 json.dump(cisco_devices, f, indent=4)
@@ -128,7 +175,53 @@ def configure():
             return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
         except Exception as e:
             print(e)
+            if str(e).startswith('Failed to enter enable mode.'):
+                return '<script>alert("Failed to enter enable mode. Please ensure you seting secret in device"); window.location.href="/basicedit";</script>'
             return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
+
+@app.route('/eraseconfig', methods=['POST', 'GET'])
+def eraseconfig():
+    return render_template('eraseconfig.html', cisco_devices=cisco_devices)
+
+@app.route('/erase', methods=['POST'])
+def erase_device():
+    if request.method == 'POST':
+        device_index = int(request.form.get('device_index'))
+        if 0 <= device_index < len(cisco_devices):
+            device = cisco_devices[device_index]
+            device_info = device['device_info']
+
+            try:
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+
+                output = net_connect.send_command_timing('erase startup-config')
+                if 'confirm' in output:
+                    output += net_connect.send_command_timing('')
+                output += net_connect.send_command_timing('reload')
+                if 'confirm' in output:
+                    output += net_connect.send_command_timing('no')
+                if 'confirm' in output:
+                    output += net_connect.send_command_timing('')
+                
+                net_connect.disconnect()
+                del cisco_devices[device_index]
+                with open(json_file_path, 'w') as f:
+                    json.dump(cisco_devices, f, indent=4)
+
+                return '<script>alert("Configuration erased successfully! Device will reload."); window.location.href="/eraseconfig";</script>'
+            except Exception as e:
+                print(e)
+                return '<script>alert("Failed to erase configuration. Please try again."); window.location.href="/eraseconfig";</script>'
+
+    return redirect(url_for('eraseconfig'))
+
+
+
+
+
+
+
 
 
 
@@ -142,8 +235,6 @@ def is_ssh_reachable(ip, username, password):
     except Exception as e:
         print(e)
         return False
-
-
 
 
     

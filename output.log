@@ -1,9 +1,13 @@
 
-Router-TEST>
-Router-TEST>terminal width 511
-Router-TEST>terminal length 0
-Router-TEST>
-Router-TEST>
-Router-TEST>enable
-Password: 
-Password: 
+Switch>
+Switch>terminal width 511
+Switch>terminal length 0
+Switch>
+Switch>
+Switch>enable
+% No password set
+Switch>********
+Translating "********"...domain server (255.255.255.255)
+% Unknown command or computer name, or unable to find computer address
+Switch>
+Switch>
