@@ -93,6 +93,7 @@ def basic_edit():
 def configure():
     if request.method == 'POST':
         device_name = request.form.get('device_name')
+        many_hostname = request.form.get('many_hostname')
         hostname = request.form.get('hostname')
         secret_password = request.form.get('secret_password')
         new_username = request.form.get('new_username')
@@ -103,6 +104,86 @@ def configure():
         save_config = request.form.get('save_config')
         default_gateway = request.form.get('default_gateway')
 
+        # many hostname
+        if many_hostname:
+            many_names = [name.strip() for name in many_hostname.split(',')]
+            print(many_names)
+            try:
+                for name in many_names:
+                    try:
+                        for device in cisco_devices:
+                            if device['name'] == name:
+                                device_info = device['device_info']
+                                ip = device_info['ip']
+
+                                if not is_ssh_reachable(ip, device_info['username'], device_info['password']):
+                                    return '<script>alert("SSH connection failed. Make sure SSH is enabled and credentials are correct."); window.location.href="/basicedit";</script>'
+
+                                if hostname:
+                                    net_connect = ConnectHandler(**device_info)
+                                    net_connect.enable()
+                                    output = net_connect.send_config_set(['hostname ' + hostname])
+                                    print(output)
+                                    net_connect.disconnect()
+                                    device['name'] = hostname
+
+                                if secret_password:
+                                    net_connect = ConnectHandler(**device_info)
+                                    net_connect.enable()
+                                    output = net_connect.send_config_set(['enable secret ' + secret_password])
+                                    print(output)
+                                    net_connect.disconnect()
+
+                                    device['device_info']['secret'] = secret_password
+                                
+                                if default_gateway:
+                                    net_connect = ConnectHandler(**device_info)
+                                    net_connect.enable()
+                                    output = net_connect.send_config_set(['ip default-gateway ' + default_gateway])
+                                    print(output)
+                                    net_connect.disconnect()
+
+                                if new_username and new_password and level_privilege:
+                                    net_connect = ConnectHandler(**device_info)
+                                    net_connect.enable()
+                                    output = net_connect.send_config_set(['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
+                                    print(output)
+                                    net_connect.disconnect()
+
+                                if service_password_encryption == "enable":
+                                    net_connect = ConnectHandler(**device_info)
+                                    net_connect.enable()
+                                    output = net_connect.send_config_set(['service password-encryption'])
+                                    print(output)
+                                    net_connect.disconnect()
+
+                                if enable_snmp == "enable":
+                                    net_connect = ConnectHandler(**device_info)
+                                    net_connect.enable()
+                                    output = net_connect.send_config_set(['snmp-server community public RO'])
+                                    print(output)
+                                    net_connect.disconnect()
+                                
+                                if save_config == "enable":
+                                    net_connect = ConnectHandler(**device_info)
+                                    net_connect.enable()
+                                    output = net_connect.send_command_timing('write')
+                                    print(output)
+                                    net_connect.disconnect()
+
+                        with open(json_file_path, 'w') as f:
+                            json.dump(cisco_devices, f, indent=4)
+
+                    except Exception as e:
+                        print(e)
+                        if str(e).startswith('Failed to enter enable mode.'):
+                            return '<script>alert("Failed to enter enable mode. Please ensure you seting secret in device"); window.location.href="/basicedit";</script>'
+                        return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
+                return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
+            except Exception as e:
+                print(e)
+
+        # single hostname
         try:
             for device in cisco_devices:
                 if device['name'] == device_name:
@@ -161,13 +242,8 @@ def configure():
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
                         output = net_connect.send_command_timing('write')
-                        if 'confirm' in output:
-                            output += net_connect.send_command_timing('')
                         print(output)
                         net_connect.disconnect()
-                        
-
-
 
             with open(json_file_path, 'w') as f:
                 json.dump(cisco_devices, f, indent=4)
@@ -217,7 +293,9 @@ def erase_device():
     return redirect(url_for('eraseconfig'))
 
 
-
+@app.route('/advance', methods=['POST', 'GET'])
+def advance():
+    return render_template('advance.html', cisco_devices=cisco_devices)
 
 
 

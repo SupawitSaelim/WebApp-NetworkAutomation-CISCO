@@ -11,10 +11,61 @@
             align-items: flex-start; 
         }
         .input-container input[type="text"],
-        .input-container input[type="password"] {
+        .input-container input[type="password"],
+        .input-container input[type="number"] {
             flex: 1;
             margin-right: 10px; 
         }
+    </style>
+    <style>
+    .checkbox-wrapper-22 .switch {
+        display: inline-block;
+        height: 34px;
+        position: relative;
+        width: 60px;
+    }
+    
+    .checkbox-wrapper-22 .switch input {
+        display:none;
+    }
+    
+    .checkbox-wrapper-22 .slider {
+        background-color: #ccc;
+        bottom: 0;
+        cursor: pointer;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: .4s;
+    }
+    
+    .checkbox-wrapper-22 .slider:before {
+        background-color: #fff;
+        bottom: 4px;
+        content: "";
+        height: 26px;
+        left: 4px;
+        position: absolute;
+        transition: .4s;
+        width: 26px;
+    }
+    
+    .checkbox-wrapper-22 input:checked + .slider {
+        background-color: #66bb6a;
+    }
+    
+    .checkbox-wrapper-22 input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+    
+    .checkbox-wrapper-22 .slider.round {
+        border-radius: 34px;
+    }
+    
+    .checkbox-wrapper-22 .slider.round:before {
+        border-radius: 50%;
+    }
     </style>
 </head>
 <body>
@@ -48,11 +99,11 @@
                 <span class="icon"><i class="fas fa-cogs"></i></span>
                 <span class="title">Basic Configurations</span>
                 </a></li>
-                <li><a href="advance">
+                <li><a href="advance" class="active">
                 <span class="icon"><i class="fas fa-blog"></i></span>
                 <span class="title">Advance Config</span>
                 </a></li>
-                <li><a href="eraseconfig" class="active">
+                <li><a href="eraseconfig">
                 <span class="icon"><i class="fas fa-leaf"></i></span>
                 <span class="title">Erase configurations</span>
                 </a></li>
@@ -60,35 +111,29 @@
         </div>
         <div class="main_container">
             <div class="container">
-                <h1 style="text-align: center;color: #2e4ead;">Erase Startup-Configurations</h1>
-                <br><br>
-                <table>
-                    <tr>
-                        <th>Name devices</th>
-                        <th>IP Address</th>
-                        <th>Actions</th>
-                    </tr>
-                    {% if cisco_devices %}
+                <h1 style="text-align: center;color: #2e4ead;">ADVANCE CONFIGURATIONS</h1><br><br>
+                <form method="POST" action="/configure" >
+                    <select name="device_name" required>
+                        <option value="" disabled selected>Select a device</option>
                         {% for device in cisco_devices %}
-                        <tr>
-                            <td>{{ device.name }}</td>
-                            <td>{{ device.device_info.ip }}</td>
-                            <td>
-                                <form method="POST" action="/erase" onsubmit="return confirm('Are you sure you want to erase the configuration for {{ device.name }}?');">
-                                    <input type="hidden" name="device_index" value="{{ loop.index0 }}">
-                                    <button type="submit" style="color: tomato;padding: 7px 20px;border: none;border-radius: 5px;background-color:white;font-size:16px;cursor: pointer;font-weight:bold;" onmouseover="this.style.color='red';" onmouseout="this.style.color='tomato';">ERASE</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <option value="{{ device.name }}">{{ device.name }}</option>
                         {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="3" style="text-align: center;">No devices available.</td>
-                        </tr>
-                    {% endif %}
-                </table>
+                    </select>
+                    <br><br><br>
+                    <br><br>
+                    <div class="input-container">
+                        <div class="checkbox-wrapper-22" style="margin-left: 22%;">
+                            <label class="switch" for="save_config">
+                                <input type="checkbox" id="save_config" name="save_config" value="enable" />
+                                <div class="slider round"></div>
+                            </label>
+                            <label for="save_config">Save to startup-config</label>
+                        </div>
+                    </div>
+                    <input style="margin-left: 90%;" type="submit" value="Submit">
+                </form>
             </div>
         </div>
-        </div>
-    </body>
+    </div>
+</body>
 </html>
