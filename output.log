@@ -1,19 +1,20 @@
 
-Test>
-Test>terminal width 511
-Test>terminal length 0
-Test>
-Test>
-Test>enable
+SWITCH-TEST-AUTOMATION>
+SWITCH-TEST-AUTOMATION>terminal width 511
+SWITCH-TEST-AUTOMATION>terminal length 0
+SWITCH-TEST-AUTOMATION>
+SWITCH-TEST-AUTOMATION>
+SWITCH-TEST-AUTOMATION>enable
 Password: 
-Test#
-Test#
-Test#configure terminal
+SWITCH-TEST-AUTOMATION#
+SWITCH-TEST-AUTOMATION#
+SWITCH-TEST-AUTOMATION#configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
-Test(config)#
-Test(config)#cdp run
-Test(config)#
-Test(config)#end
-Test#
-Test#
-Test#exit
+SWITCH-TEST-AUTOMATI(config)#
+SWITCH-TEST-AUTOMATI(config)#interface range  vlan 2
+SWITCH-TEST-AUTOMATI(config-if-range)#no shutdown
+SWITCH-TEST-AUTOMATI(config-if-range)#
+SWITCH-TEST-AUTOMATI(config-if-range)#end
+SWITCH-TEST-AUTOMATION#
+SWITCH-TEST-AUTOMATION#
+SWITCH-TEST-AUTOMATION#exit

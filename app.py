@@ -83,11 +83,9 @@ def delete_device():
 
     return redirect(url_for('devices'))
 
-
 @app.route('/basicedit', methods=['POST', 'GET'])
 def basic_edit():
     return render_template('basicedit.html', cisco_devices=cisco_devices)
-
 
 @app.route('/configure', methods=['POST'])
 def configure():
@@ -104,6 +102,42 @@ def configure():
         save_config = request.form.get('save_config')
         default_gateway = request.form.get('default_gateway')
         enable_cdp = request.form.get('enable_cdp')
+        raw_interfaces = request.form.get('interface').strip()
+        ip_addresses = request.form.get('ip_address')
+        active_interfaces = request.form.get('activate')
+        deactivate_interfaces = request.form.get('deactivate')
+
+        def cidr_to_subnet_mask(cidr):
+            try:
+                cidr = int(cidr)
+                if cidr < 0 or cidr > 32:
+                    return None  # Invalid CIDR notation
+
+                subnet_mask = (0xffffffff << (32 - cidr)) & 0xffffffff
+                return ".".join([str((subnet_mask >> 24) & 0xff),
+                                 str((subnet_mask >> 16) & 0xff),
+                                 str((subnet_mask >> 8) & 0xff),
+                                 str(subnet_mask & 0xff)])
+            except ValueError:
+                return None  # Invalid input
+        
+        ip_and_subnet_list = ip_addresses.split(',')
+        interface_list = raw_interfaces.split(',')
+        ip_list = []
+        subnet_mask_list = []
+
+        for item in ip_and_subnet_list:
+            parts = item.split('/')
+            if len(parts) == 2:
+                ip, cidr = parts
+                subnet_mask = cidr_to_subnet_mask(cidr)
+                if subnet_mask:
+                    ip_list.append(ip)
+                    subnet_mask_list.append(subnet_mask)
+
+        print("Interfaces:", interface_list)
+        print("IP Addresses:", ip_list)
+        print("Subnet Masks:", subnet_mask_list)
 
         # many hostname
         if many_hostname:
@@ -111,6 +145,7 @@ def configure():
             print(many_names)
             try:
                 for name in many_names:
+                    print(name)
                     try:
                         for device in cisco_devices:
                             if device['name'] == name:
@@ -137,6 +172,45 @@ def configure():
 
                                     device['device_info']['secret'] = secret_password
                                 
+                                if interface_list and ip_list and subnet_mask_list:
+                                    try:
+                                        net_connect = ConnectHandler(**device_info)
+                                        net_connect.enable()
+                                        config_commands = []
+
+                                        for interface, ip, subnet_mask in zip(interface_list, ip_list, subnet_mask_list):
+                                            if active_interfaces == "enable":
+                                                config_commands.append('interface ' + interface)
+                                                config_commands.append('ip address ' + ip + ' ' + subnet_mask)
+                                                config_commands.append('no shutdown')
+                                            elif deactivate_interfaces == "enable":
+                                                config_commands.append('interface ' + interface)
+                                                config_commands.append('no ip address ' + ip + ' ' + subnet_mask)
+                                                config_commands.append('shutdown')
+
+                                        output = net_connect.send_config_set(config_commands)
+                                        print(output)
+                                        net_connect.disconnect()
+                                    except Exception as e:
+                                        print("An error occurred:", str(e))
+                                else:
+                                    print("One or more required lists are empty (raw_interfaces, ip_list, subnet_mask_list).")
+                                
+                                if interface_list and active_interfaces == "enable" or deactivate_interfaces == "enable":
+                                    for interface in interface_list:
+                                        net_connect = ConnectHandler(**device_info)
+                                        net_connect.enable()
+                                        config_commands = []
+                                        if active_interfaces == "enable":
+                                            config_commands.append('interface range ' + interface)
+                                            config_commands.append('no shutdown')
+                                        elif deactivate_interfaces == "enable":
+                                            config_commands.append('interface range ' + interface)
+                                            config_commands.append('shutdown')
+                                        output = net_connect.send_config_set(config_commands)
+                                        print(output)
+                                        net_connect.disconnect()
+
                                 if default_gateway:
                                     net_connect = ConnectHandler(**device_info)
                                     net_connect.enable()
@@ -147,7 +221,8 @@ def configure():
                                 if new_username and new_password and level_privilege:
                                     net_connect = ConnectHandler(**device_info)
                                     net_connect.enable()
-                                    output = net_connect.send_config_set(['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
+                                    output = net_connect.send_config_set(
+                                        ['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
                                     print(output)
                                     net_connect.disconnect()
 
@@ -164,14 +239,14 @@ def configure():
                                     output = net_connect.send_config_set(['snmp-server community public RO'])
                                     print(output)
                                     net_connect.disconnect()
-                                
+
                                 if enable_cdp == "enable":
                                     net_connect = ConnectHandler(**device_info)
                                     net_connect.enable()
                                     output = net_connect.send_config_set(['cdp run'])
                                     print(output)
                                     net_connect.disconnect()
-                                
+
                                 if save_config == "enable":
                                     net_connect = ConnectHandler(**device_info)
                                     net_connect.enable()
@@ -185,7 +260,7 @@ def configure():
                     except Exception as e:
                         print(e)
                         if str(e).startswith('Failed to enter enable mode.'):
-                            return '<script>alert("Failed to enter enable mode. Please ensure you seting secret in device"); window.location.href="/basicedit";</script>'
+                            return '<script>alert("Failed to enter enable mode. Please ensure you set secret in device"); window.location.href="/basicedit";</script>'
                         return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
                 return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
             except Exception as e:
@@ -217,7 +292,45 @@ def configure():
                         net_connect.disconnect()
 
                         device['device_info']['secret'] = secret_password
+
+                    if interface_list and ip_list and subnet_mask_list:
+                        try:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            config_commands = []
+
+                            for interface, ip, subnet_mask in zip(interface_list, ip_list, subnet_mask_list):
+                                if active_interfaces == "enable":
+                                    config_commands.append('interface ' + interface)
+                                    config_commands.append('ip address ' + ip + ' ' + subnet_mask)
+                                    config_commands.append('no shutdown')
+                                elif deactivate_interfaces == "enable":
+                                    config_commands.append('interface ' + interface)
+                                    config_commands.append('no ip address ' + ip + ' ' + subnet_mask)
+                                    config_commands.append('shutdown')
+                            output = net_connect.send_config_set(config_commands)
+                            print(output)
+                            net_connect.disconnect()
+                        except Exception as e:
+                            print("An error occurred:", str(e))
+                    else:
+                        print("One or more required lists are empty (raw_interfaces, ip_list, subnet_mask_list).")
                     
+                    if interface_list and active_interfaces == "enable" or deactivate_interfaces == "enable":
+                        for interface in interface_list:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            config_commands = []
+                            if active_interfaces == "enable":
+                                config_commands.append('interface range ' + interface)
+                                config_commands.append('no shutdown')
+                            elif deactivate_interfaces == "enable":
+                                config_commands.append('interface range ' + interface)
+                                config_commands.append('shutdown')
+                            output = net_connect.send_config_set(config_commands)
+                            print(output)
+                            net_connect.disconnect()
+
                     if default_gateway:
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
@@ -228,7 +341,8 @@ def configure():
                     if new_username and new_password and level_privilege:
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
-                        output = net_connect.send_config_set(['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
+                        output = net_connect.send_config_set(
+                            ['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
                         print(output)
                         net_connect.disconnect()
 
@@ -245,14 +359,14 @@ def configure():
                         output = net_connect.send_config_set(['snmp-server community public RO'])
                         print(output)
                         net_connect.disconnect()
-                    
+
                     if enable_cdp == "enable":
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
                         output = net_connect.send_config_set(['cdp run'])
                         print(output)
                         net_connect.disconnect()
-                    
+
                     if save_config == "enable":
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
@@ -267,7 +381,7 @@ def configure():
         except Exception as e:
             print(e)
             if str(e).startswith('Failed to enter enable mode.'):
-                return '<script>alert("Failed to enter enable mode. Please ensure you seting secret in device"); window.location.href="/basicedit";</script>'
+                return '<script>alert("Failed to enter enable mode. Please ensure you set secret in device"); window.location.href="/basicedit";</script>'
             return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
 
 @app.route('/eraseconfig', methods=['POST', 'GET'])
@@ -307,7 +421,6 @@ def erase_device():
 
     return redirect(url_for('eraseconfig'))
 
-
 @app.route('/advance', methods=['POST', 'GET'])
 def advance():
     return render_template('advance.html', cisco_devices=cisco_devices)
@@ -315,8 +428,6 @@ def advance():
 @app.route('/showconfig', methods=['POST', 'GET'])
 def showconfig():
     return render_template('showconfig.html', cisco_devices=cisco_devices)
-
-
 
 
 
