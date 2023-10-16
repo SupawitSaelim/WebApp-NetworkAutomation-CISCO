@@ -103,6 +103,7 @@ def configure():
         enable_snmp = request.form.get('enable_snmp')
         save_config = request.form.get('save_config')
         default_gateway = request.form.get('default_gateway')
+        enable_cdp = request.form.get('enable_cdp')
 
         # many hostname
         if many_hostname:
@@ -161,6 +162,13 @@ def configure():
                                     net_connect = ConnectHandler(**device_info)
                                     net_connect.enable()
                                     output = net_connect.send_config_set(['snmp-server community public RO'])
+                                    print(output)
+                                    net_connect.disconnect()
+                                
+                                if enable_cdp == "enable":
+                                    net_connect = ConnectHandler(**device_info)
+                                    net_connect.enable()
+                                    output = net_connect.send_config_set(['cdp run'])
                                     print(output)
                                     net_connect.disconnect()
                                 
@@ -238,6 +246,13 @@ def configure():
                         print(output)
                         net_connect.disconnect()
                     
+                    if enable_cdp == "enable":
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['cdp run'])
+                        print(output)
+                        net_connect.disconnect()
+                    
                     if save_config == "enable":
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
@@ -297,6 +312,9 @@ def erase_device():
 def advance():
     return render_template('advance.html', cisco_devices=cisco_devices)
 
+@app.route('/showconfig', methods=['POST', 'GET'])
+def showconfig():
+    return render_template('showconfig.html', cisco_devices=cisco_devices)
 
 
 

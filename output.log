@@ -7,8 +7,13 @@ Test>
 Test>enable
 Password: 
 Test#
-Test#write
-Building configuration...
-[OK]
+Test#
+Test#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Test(config)#
+Test(config)#cdp run
+Test(config)#
+Test(config)#end
+Test#
 Test#
 Test#exit
