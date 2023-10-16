@@ -421,9 +421,6 @@ def erase_device():
 
     return redirect(url_for('eraseconfig'))
 
-@app.route('/advance', methods=['POST', 'GET'])
-def advance():
-    return render_template('advance.html', cisco_devices=cisco_devices)
 
 @app.route('/showconfig', methods=['POST', 'GET'])
 def showconfig():
