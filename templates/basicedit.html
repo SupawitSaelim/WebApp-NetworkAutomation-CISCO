@@ -113,7 +113,7 @@
             <div class="container">
                 <h1 style="text-align: center;color: #2e4ead;">BASIC CONFIGURATIONS</h1><br><br>
                 <form method="POST" action="/configure" >
-                    <select name="device_name" id="deviceSelect" required>
+                    <select name="device_name" id="deviceSelect" {% if many_hostname %}style="display: none;"{% endif %}>
                         <option value="" disabled selected>Select a device</option>
                         {% for device in cisco_devices %}
                             <option value="{{ device.name }}">{{ device.name }}</option>
@@ -132,7 +132,7 @@
                     <h2 style="color:  #2e4ead;text-align: left;">Add new user for ssh</h2><br>
                     <div class="input-container">
                         <input type="text" id="new_username" name="new_username" placeholder="new username" minlength="3" maxlength="25">
-                        <input type="password" id="new_password" name "new_password" placeholder="new password" minlength="3" maxlength="25">
+                        <input type="password" id="new_password" name="new_password" placeholder="new password" minlength="3" maxlength="25">
                         <input type="number" id="level_pri" name="level_pri" placeholder="Level privilege 1-15" min="1" max="15">
                     </div>
                     <br><br>
@@ -197,9 +197,14 @@
                             }
                         }
                     });
+                    manyNameInput.addEventListener("input", function () {
+                        if (manyNameInput.value.trim() !== "") {
+                            deviceSelect.style.display = "none"; // Hide the dropdown
+                        } else {
+                            deviceSelect.style.display = "block"; // Show the dropdown
+                        }
+                    });
                 </script>
-                
-                
             </div>
         </div>
     </div>

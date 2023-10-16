@@ -1,19 +1,14 @@
 
-test>
-test>terminal width 511
-test>terminal length 0
-test>
-test>
-test>enable
+Test>
+Test>terminal width 511
+Test>terminal length 0
+Test>
+Test>
+Test>enable
 Password: 
-test#
-test#
-test#configure terminal
-Enter configuration commands, one per line.  End with CNTL/Z.
-test(config)#
-test(config)#hostname Testnew
-Testnew(config)#
-Testnew(config)#end
-Testnew#
-Testnew#
-Testnew#exit
+Test#
+Test#write
+Building configuration...
+[OK]
+Test#
+Test#exit
