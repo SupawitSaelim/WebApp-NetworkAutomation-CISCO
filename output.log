@@ -1,21 +1,18 @@
-kakdog>
-kakdog>terminal width 511
-kakdog>terminal length 0
-kakdog>
-kakdog>
-kakdog>enable
+RT>
+RT>terminal width 511
+RT>terminal length 0
+RT>
+RT>
+RT>enable
 Password: 
-kakdog#
-kakdog#
-kakdog#configure terminal
+RT#
+RT#
+RT#configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
-kakdog(config)#
-kakdog(config)#no network 10.9.8.0 0.0.0.255 area 0
-                         ^
-% Invalid input detected at '^' marker.
-
-kakdog(config)#
-kakdog(config)#end
-kakdog#
-kakdog#
-kakdog#exit
+RT(config)#
+RT(config)#no router rip
+RT(config)#
+RT(config)#end
+RT#
+RT#
+RT#exit

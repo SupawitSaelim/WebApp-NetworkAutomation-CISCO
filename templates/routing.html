@@ -1,93 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/styles.css">
-    <title>Configurations</title>
-    <style>
-        .input-container {
-            display: flex;
-            align-items: flex-start; 
-        }
-        .input-container input[type="text"],
-        .input-container input[type="password"],
-        .input-container input[type="number"] {
-            flex: 1;
-            margin-right: 10px; 
-        }
-    </style>
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../static/styles.css">
+  <title>Configurations</title>
+  <style>
+    .input-container {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .input-container input[type="text"],
+    .input-container input[type="password"],
+    .input-container input[type="number"] {
+      flex: 1;
+      margin-right: 10px;
+    }
+  </style>
+  <style>
     .checkbox-wrapper-22 .switch {
-        display: inline-block;
-        height: 34px;
-        position: relative;
-        width: 60px;
+      display: inline-block;
+      height: 34px;
+      position: relative;
+      width: 60px;
     }
-    
+
     .checkbox-wrapper-22 .switch input {
-        display:none;
+      display: none;
     }
-    
+
     .checkbox-wrapper-22 .slider {
-        background-color: #ccc;
-        bottom: 0;
-        cursor: pointer;
-        left: 0;
-        position: absolute;
-        right: 0;
-        top: 0;
-        transition: .4s;
+      background-color: #ccc;
+      bottom: 0;
+      cursor: pointer;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transition: .4s;
     }
-    
+
     .checkbox-wrapper-22 .slider:before {
-        background-color: #fff;
-        bottom: 4px;
-        content: "";
-        height: 26px;
-        left: 4px;
-        position: absolute;
-        transition: .4s;
-        width: 26px;
+      background-color: #fff;
+      bottom: 4px;
+      content: "";
+      height: 26px;
+      left: 4px;
+      position: absolute;
+      transition: .4s;
+      width: 26px;
     }
-    
-    .checkbox-wrapper-22 input:checked + .slider {
-        background-color: #66bb6a;
+
+    .checkbox-wrapper-22 input:checked+.slider {
+      background-color: #66bb6a;
     }
-    
-    .checkbox-wrapper-22 input:checked + .slider:before {
-        transform: translateX(26px);
+
+    .checkbox-wrapper-22 input:checked+.slider:before {
+      transform: translateX(26px);
     }
-    
+
     .checkbox-wrapper-22 .slider.round {
-        border-radius: 34px;
+      border-radius: 34px;
     }
-    
+
     .checkbox-wrapper-22 .slider.round:before {
-        border-radius: 50%;
+      border-radius: 50%;
     }
-    </style>
-      <style>
-        .checkbox-wrapper-23 *,
+  </style>
+  <style>
+    .checkbox-wrapper-23 *,
     .checkbox-wrapper-23 *:after,
     .checkbox-wrapper-23 *:before {
       box-sizing: border-box;
     }
-    
+
     .checkbox-wrapper-23 input {
       position: absolute;
       opacity: 0;
     }
-    
-    .checkbox-wrapper-23 input:checked + label svg path {
+
+    .checkbox-wrapper-23 input:checked+label svg path {
       stroke-dashoffset: 0;
     }
-    
-    .checkbox-wrapper-23 input:focus + label {
+
+    .checkbox-wrapper-23 input:focus+label {
       transform: scale(1.03);
     }
-    
-    .checkbox-wrapper-23 input + label {
+
+    .checkbox-wrapper-23 input+label {
       display: inline-block;
       vertical-align: middle;
       border: 2px solid #333;
@@ -97,28 +99,28 @@
       cursor: pointer;
       transition: all .2s ease;
     }
-    
-    .checkbox-wrapper-23 input + label:active {
+
+    .checkbox-wrapper-23 input+label:active {
       transform: scale(1.05);
       border-radius: 12px;
     }
-    
-    .checkbox-wrapper-23 input + label svg {
+
+    .checkbox-wrapper-23 input+label svg {
       pointer-events: none;
       padding: 5%;
     }
-    
-    .checkbox-wrapper-23 input + label svg path {      
-      fill: none;     
+
+    .checkbox-wrapper-23 input+label svg path {
+      fill: none;
       stroke: #333;
       stroke-width: 4px;
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-dasharray: 100;
       stroke-dashoffset: 101;
-      transition: all 250ms cubic-bezier(1,0,.37,.91);
+      transition: all 250ms cubic-bezier(1, 0, .37, .91);
     }
-    
+
     .label-text {
       display: inline-block;
       margin-bottom: 3%;
@@ -126,198 +128,252 @@
       color: #2e4ead;
       text-transform: uppercase;
       font-weight: bold;
-      margin-left: 10px; /* Adjust the margin as needed */
+      margin-left: 10px;
+      /* Adjust the margin as needed */
+    }
+  </style>
+  <style>
+    .checkbox-container {
+      display: flex;
+      justify-content: space-between;
+      width: 60%;
+      /* ปรับความกว้างตามที่ต้องการ */
+      margin: 0 auto;
+      /* จัดให้ตรงกลางของหน้าเว็บ */
     }
 
-    </style>
-    <style>
-        .checkbox-container {
-  display: flex;
-  justify-content: space-between;
-  width: 60%; /* ปรับความกว้างตามที่ต้องการ */
-  margin: 0 auto; /* จัดให้ตรงกลางของหน้าเว็บ */
-}
+    .checkbox-wrapper-23.left,
+    .checkbox-wrapper-23.right {
+      width: 45%;
+      /* ปรับความกว้างตามที่ต้องการ */
+      text-align: left;
+      /* จัดให้ checkbox อยู่ตรงกลาง */
+      margin: 10px;
+      /* ระยะห่างระหว่าง checkbox แต่ละอัน */
+    }
 
-.checkbox-wrapper-23.left,
-.checkbox-wrapper-23.right {
-  width: 45%; /* ปรับความกว้างตามที่ต้องการ */
-  text-align: left; /* จัดให้ checkbox อยู่ตรงกลาง */
-  margin: 10px; /* ระยะห่างระหว่าง checkbox แต่ละอัน */
-}
+    .checkbox-wrapper-23 input {
+      position: absolute;
+      opacity: 0;
+    }
 
-.checkbox-wrapper-23 input {
-  position: absolute;
-  opacity: 0;
-}
+    .checkbox-wrapper-23 input:checked+label svg path {
+      stroke-dashoffset: 0;
+    }
 
-.checkbox-wrapper-23 input:checked + label svg path {
-  stroke-dashoffset: 0;
-}
+    .checkbox-wrapper-23 input:focus+label {
+      transform: scale(1.03);
+    }
 
-.checkbox-wrapper-23 input:focus + label {
-  transform: scale(1.03);
-}
+    .checkbox-wrapper-23 input+label {
+      display: inline-block;
+      vertical-align: middle;
+      border: 2px solid #333;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
 
-.checkbox-wrapper-23 input + label {
-  display: inline-block;
-  vertical-align: middle;
-  border: 2px solid #333;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all .2s ease;
-}
+    .checkbox-wrapper-23 input+label:active {
+      transform: scale(1.05);
+      border-radius: 12px;
+    }
 
-.checkbox-wrapper-23 input + label:active {
-  transform: scale(1.05);
-  border-radius: 12px;
-}
+    .checkbox-wrapper-23 input+label svg {
+      pointer-events: none;
+      padding: 5%;
+    }
 
-.checkbox-wrapper-23 input + label svg {
-  pointer-events: none;
-  padding: 5%;
-}
-
-.checkbox-wrapper-23 input + label svg path {
-  fill: none;
-  stroke: #333;
-  stroke-width: 4px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 101;
-  transition: all 250ms cubic-bezier(1, 0, .37, .91);
-}
-
-    </style>
+    .checkbox-wrapper-23 input+label svg path {
+      fill: none;
+      stroke: #333;
+      stroke-width: 4px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 101;
+      transition: all 250ms cubic-bezier(1, 0, .37, .91);
+    }
+  </style>
 </head>
+
 <body>
-    <div class="wrapper">
-        <div class="top_navbar">
-            <div class="hamburger">
-            </div>
-            <div class="top_menu">
-            <div class="logo">
-                <img src="../static/cisco-logo-transparent-free-png.webp" style="width: 7%;;" alt="">
-            </div>
-            <ul>
-                <li><a href="index"><h4>Refresh</h4></a></li>
-                <form method="POST" action="/logout">
-                    <button type="submit" style="color: #2e4ead;padding: 7px 20px;border: none;border-radius: 5px;background-color:white;font-size:16px;cursor: pointer;font-weight:bold;" onmouseover="this.style.color='midnightblue';" onmouseout="this.style.color='#2e4ead';">Logout</button>
-                </form>
-            </ul>
-            </div>
+  <div class="wrapper">
+    <div class="top_navbar">
+      <div class="hamburger">
+      </div>
+      <div class="top_menu">
+        <div class="logo">
+          <img src="../static/cisco-logo-transparent-free-png.webp" style="width: 7%;;" alt="">
         </div>
-        <div class="sidebar">
-            <ul><br>
-                <li><a href="index">
-                <span class="icon"><i class="fas fa-book"></i></span>
-                <span class="title">Add device</span>
-                </a></li>
-                <li><a href="devices">
-                <span class="icon"><i class="fas fa-file-video"></i></span>
-                <span class="title">Devices</span>
-                </a></li>
-                <li><a href="basicedit">
-                <span class="icon"><i class="fas fa-cogs"></i></span>
-                <span class="title">Configurations</span>
-                </a></li>
-                <li><a href="routing" class="active">
-                <span class="icon"><i class="fas fa-cogs"></i></span>
-                <span class="title">Routing Configurations</span>
-                </a></li>
-                <li><a href="eraseconfig">
-                <span class="icon"><i class="fas fa-leaf"></i></span>
-                <span class="title">Erase configurations</span>
-                </a></li>
-                <li><a href="showconfig" >
-                    <span class="icon"><i class="fas fa-leaf"></i></span>
-                    <span class="title">Show configurations</span>
-                </a></li>
-            </ul>
-        </div>
-        <div class="main_container">
-            <div class="container">
-                <h1 style="text-align: left;color: #2e4ead;">ROUTING CONFIGURATIONS</h1><br><br>
-                <form method="POST" action="/routing-config" >
-                    <select name="device_name" required>
-                        <option value="" selected>Select a device</option>
-                        {% for device in cisco_devices %}
-                            <option value="{{ device.name }}">{{ device.name }}</option>
-                        {% endfor %}
-                    </select><br><br><br><br><br>
-                    <h2 style="color: #2e4ead; text-align: left;">DEFAULT ROUTE</h2><br>
-                    <input type="text" id="default_route" name="default_route" placeholder="Exit Interface or Next Hop (e.g., 'gi0/1' or '192.168.10.2')"><br><br>
-                    <h2 style="color: #2e4ead; text-align: left;">STATIC ROUTES</h2><br>
-                    <div class="input-container">
-                        <input type="text" id="network_static" name="network_static_1" placeholder="Destination Network (e.g., 192.168.10.0/24)">
-                        <input type="text" id="exit_static" name="exit_static_1" placeholder="Exit Interface or Next Hop (e.g., 'gi0/1' or '192.168.10.2')">
-                        <span id="warning_1" style="color: red;"></span>
-                    </div>
-                    <div class="input-container">
-                        <input type="text" id="network_static" name="network_static_2" placeholder="Alternate Destination Network">
-                        <input type="text" id="exit_static" name="exit_static_2" placeholder="Alternate Exit Interface or Next Hop">
-                        <span id="warning_2" style="color: red;"></span>
-                    </div>
-                    <div class="input-container">
-                        <input type="text" id="network_static" name="network_static_3" placeholder="Alternate Destination Network">
-                        <input type="text" id="exit_static" name="exit_static_3" placeholder="Alternate Exit Interface or Next Hop">
-                        <span id="warning_3" style="color: red;"></span>
-                    </div>
-                    <div class="input-container">
-                        <input type="text" id="network_static" name="network_static_4" placeholder="Alternate Destination Network">
-                        <input type="text" id="exit_static" name="exit_static_4" placeholder="Alternate Exit Interface or Next Hop">
-                        <span id="warning_4" style="color: red;"></span>
-                    </div><br>
-                    <h2 style="color: #2e4ead; text-align: left;">REMOVE NETWORK ROUTE</h2><br>
-                    <div class="input-container">
-                      <input type="text" id="delete_route" name="delete_route" placeholder="Enter the Network to Be Removed (e.g., 192.168.10.0/24)">
-                    </div>
-                    <br><br><br>
-                    <h2 style="color: #2e4ead; text-align: left;">OSPF CONFIGURATIONS</h2><br>
-                    <input type="number" id="process_id" name="process_id" placeholder="Process id:" min="1" max="65535">
-                    <input type="text" name="router_id" id="router_id" placeholder="Router-id:">
-                    <div class="input-container">
-                      <input type="text" id="network_ospf_1" name="network_ospf_1" placeholder="Network (e.g., 192.168.1.0 )">
-                      <input type="text" id="wildcard_ospf_1" name="wildcard_ospf_1" placeholder="Wildcard mask (e.g., 0.0.0.255) ">
-                      <input type="number" id="area_ospf_1" name="area_ospf_1" placeholder="Area: (e.g., 0)" min="0" max="4294967295">
-                    </div>
-                    <div class="input-container">
-                      <input type="text" id="network_ospf_2" name="network_ospf_2" placeholder="Alternate Network">
-                      <input type="text" id="wildcard_ospf_2" name="wildcard_ospf_2" placeholder="Wildcard mask">
-                      <input type="number" id="area_ospf_2" name="area_ospf_2" placeholder="Area" min="0" max="4294967295">
-                    </div>
-                    <div class="input-container">
-                      <input type="text" id="network_ospf_3" name="network_ospf_3" placeholder="Alternate Network">
-                      <input type="text" id="wildcard_ospf_3" name="wildcard_ospf_3" placeholder="Wildcard mask">
-                      <input type="number" id="area_ospf_3" name="area_ospf_3" placeholder="Area" min="0" max="4294967295">
-                    </div><br><br>
-                    <h3 style="color: #2e4ead; text-align: left;">REMOVE NETWORK OSPF</h3><br>
-                    <div class="input-container">
-                      <input type="text" id="network_ospf_remove" name="network_ospf_remove" placeholder="Network">
-                      <input type="text" id="wildcard_ospf_remove" name="wildcard_ospf_remove" placeholder="Wildcard mask">
-                      <input type="number" id="area_ospf_remove" name="area_ospf_remove" placeholder="Area" min="0" max="4294967295">
-                    </div>
-                    <h3 style="color: #2e4ead; text-align: left;">REMOVE OSPF PROCESS</h3><br>
-                    <div class="input-container">
-                      <input type="number" id="remove_process_id" name="remove_process_id" placeholder="Process id:" min="1" max="65535">
-                    </div>
-                    <input style="margin-left: 90%;" type="submit" value="Submit">
-                </form>
-            </div>
-        </div>
+        <ul>
+          <li><a href="index">
+              <h4>Refresh</h4>
+            </a></li>
+          <form method="POST" action="/logout">
+            <button type="submit"
+              style="color: #2e4ead;padding: 7px 20px;border: none;border-radius: 5px;background-color:white;font-size:16px;cursor: pointer;font-weight:bold;"
+              onmouseover="this.style.color='midnightblue';" onmouseout="this.style.color='#2e4ead';">Logout</button>
+          </form>
+        </ul>
+      </div>
     </div>
-    <script>
-      document.querySelector("form").addEventListener("submit", function (e) {
-          for (var i = 1; i <= 4; i++) {
-              var networkInput = document.getElementById("network_static_" + i).value;
-              if (networkInput && !networkInput.includes('/')) {
-                  e.preventDefault(); // Prevent form submission
-                  document.getElementById("warning_" + i).textContent = "Please include CIDR notation (e.g., /24).";
-              }
-          }
-      });
+    <div class="sidebar">
+      <ul><br>
+        <li><a href="index">
+            <span class="icon"><i class="fas fa-book"></i></span>
+            <span class="title">Add device</span>
+          </a></li>
+        <li><a href="devices">
+            <span class="icon"><i class="fas fa-file-video"></i></span>
+            <span class="title">Devices</span>
+          </a></li>
+        <li><a href="basicedit">
+            <span class="icon"><i class="fas fa-cogs"></i></span>
+            <span class="title">Configurations</span>
+          </a></li>
+        <li><a href="routing" class="active">
+            <span class="icon"><i class="fas fa-cogs"></i></span>
+            <span class="title">Routing Configurations</span>
+          </a></li>
+        <li><a href="eraseconfig">
+            <span class="icon"><i class="fas fa-leaf"></i></span>
+            <span class="title">Erase configurations</span>
+          </a></li>
+        <li><a href="showconfig">
+            <span class="icon"><i class="fas fa-leaf"></i></span>
+            <span class="title">Show configurations</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="main_container">
+      <div class="container">
+        <h1 style="text-align: left;color: #2e4ead;">ROUTING CONFIGURATIONS</h1><br><br>
+        <form method="POST" action="/routing-config">
+          <select name="device_name" required>
+            <option value="" selected>Select a device</option>
+            {% for device in cisco_devices %}
+            <option value="{{ device.name }}">{{ device.name }}</option>
+            {% endfor %}
+          </select><br><br><br><br><br>
+          <h2 style="color: #2e4ead; text-align: left;">DEFAULT ROUTE</h2><br>
+          <input type="text" id="default_route" name="default_route"
+            placeholder="Exit Interface or Next Hop (e.g., 'gi0/1' or '192.168.10.2')"><br><br>
+          <h2 style="color: #2e4ead; text-align: left;">STATIC ROUTES</h2><br>
+          <div class="input-container">
+            <input type="text" id="network_static" name="network_static_1"
+              placeholder="Destination Network (e.g., 192.168.10.0/24)">
+            <input type="text" id="exit_static" name="exit_static_1"
+              placeholder="Exit Interface or Next Hop (e.g., 'gi0/1' or '192.168.10.2')">
+            <span id="warning_1" style="color: red;"></span>
+          </div>
+          <div class="input-container">
+            <input type="text" id="network_static" name="network_static_2" placeholder="Alternate Destination Network">
+            <input type="text" id="exit_static" name="exit_static_2" placeholder="Alternate Exit Interface or Next Hop">
+            <span id="warning_2" style="color: red;"></span>
+          </div>
+          <div class="input-container">
+            <input type="text" id="network_static" name="network_static_3" placeholder="Alternate Destination Network">
+            <input type="text" id="exit_static" name="exit_static_3" placeholder="Alternate Exit Interface or Next Hop">
+            <span id="warning_3" style="color: red;"></span>
+          </div>
+          <div class="input-container">
+            <input type="text" id="network_static" name="network_static_4" placeholder="Alternate Destination Network">
+            <input type="text" id="exit_static" name="exit_static_4" placeholder="Alternate Exit Interface or Next Hop">
+            <span id="warning_4" style="color: red;"></span>
+          </div><br>
+          <h2 style="color: #2e4ead; text-align: left;">REMOVE NETWORK ROUTE</h2><br>
+          <div class="input-container">
+            <input type="text" id="delete_route" name="delete_route"
+              placeholder="Enter the Network to Be Removed (e.g., 192.168.10.0/24)">
+          </div>
+          <br><br><br>
+          <h2 style="color: #2e4ead; text-align: left;">OSPF CONFIGURATIONS</h2><br>
+          <input type="number" id="process_id" name="process_id" placeholder="Process id:" min="1" max="65535">
+          <input type="text" name="router_id" id="router_id" placeholder="Router-id:">
+          <div class="input-container">
+            <input type="text" id="network_ospf_1" name="network_ospf_1" placeholder="Network (e.g., 192.168.1.0 )">
+            <input type="text" id="wildcard_ospf_1" name="wildcard_ospf_1"
+              placeholder="Wildcard mask (e.g., 0.0.0.255) ">
+            <input type="number" id="area_ospf_1" name="area_ospf_1" placeholder="Area: (e.g., 0)" min="0"
+              max="4294967295">
+          </div>
+          <div class="input-container">
+            <input type="text" id="network_ospf_2" name="network_ospf_2" placeholder="Alternate Network">
+            <input type="text" id="wildcard_ospf_2" name="wildcard_ospf_2" placeholder="Wildcard mask">
+            <input type="number" id="area_ospf_2" name="area_ospf_2" placeholder="Area" min="0" max="4294967295">
+          </div>
+          <div class="input-container">
+            <input type="text" id="network_ospf_3" name="network_ospf_3" placeholder="Alternate Network">
+            <input type="text" id="wildcard_ospf_3" name="wildcard_ospf_3" placeholder="Wildcard mask">
+            <input type="number" id="area_ospf_3" name="area_ospf_3" placeholder="Area" min="0" max="4294967295">
+          </div><br><br>
+          <h3 style="color: #2e4ead; text-align: left;">REMOVE NETWORK OSPF</h3><br>
+          <div class="input-container">
+            <input type="text" id="network_ospf_remove" name="network_ospf_remove" placeholder="Network">
+            <input type="text" id="wildcard_ospf_remove" name="wildcard_ospf_remove" placeholder="Wildcard mask">
+            <input type="number" id="area_ospf_remove" name="area_ospf_remove" placeholder="Area" min="0"
+              max="4294967295">
+          </div>
+          <h3 style="color: #2e4ead; text-align: left;">REMOVE OSPF PROCESS</h3><br>
+          <div class="input-container">
+            <input type="number" id="remove_process_id" name="remove_process_id" placeholder="Process id:" min="1"
+              max="65535">
+          </div><br><br><br>
+          <h2 style="color: #2e4ead; text-align: left;">RIP CONFIGURATIONS</h2><br>
+          <select name="rip_version" required>
+            <option value="ripv1">RIP Version 1</option>
+            <option value="ripv2">RIP Version 2</option>
+          </select><br><br>
+          <div class="input-container">
+            <input type="text" id="network_rip_1" name="network_rip_1" placeholder="Network (e.g., 192.168.1.0)">
+          </div>
+          <div class="input-container">
+            <input type="text" id="network_rip_2" name="network_rip_2" placeholder="Alternate Network">
+          </div>
+          <div class="input-container">
+            <input type="text" id="network_rip_3" name="network_rip_3" placeholder="Alternate Network">
+          </div>
+          <br><br>
+          <h3 style="color: #2e4ead; text-align: left;">REMOVE RIP NETWORK</h3><br>
+          <div class="input-container">
+            <input type="text" id="network_rip_remove" name="network_rip_remove" placeholder="Network to Remove">
+          </div>
+          <div class="input-container">
+            <div class="checkbox-wrapper-22" style="margin-left: 25%;">
+              <label class="switch" for="auto_sum">
+                  <input type="checkbox" id="auto_sum" name="auto_sum" value="enable" />
+                  <div class="slider round"></div>
+              </label>
+              <label for="enable_snmp">Auto Summary</label>
+            </div>
+            <div class="checkbox-wrapper-22" style="margin-left: 25%;">
+              <label class="switch" for="disable_rip">
+                  <input type="checkbox" id="disable_rip" name="disable_rip" value="enable" />
+                  <div class="slider round"></div>
+              </label>
+              <label for="disable_rip">Disable RIP</label>
+            </div>
+          </div>
+
+          <input style="margin-left: 90%;" type="submit" value="Submit">
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.querySelector("form").addEventListener("submit", function (e) {
+      for (var i = 1; i <= 4; i++) {
+        var networkInput = document.getElementById("network_static_" + i).value;
+        if (networkInput && !networkInput.includes('/')) {
+          e.preventDefault(); // Prevent form submission
+          document.getElementById("warning_" + i).textContent = "Please include CIDR notation (e.g., /24).";
+        }
+      }
+    });
   </script>
 </body>
+
 </html>

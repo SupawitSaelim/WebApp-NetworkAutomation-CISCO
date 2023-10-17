@@ -554,6 +554,9 @@ def config_routing():
         wildcard_ospf_remove = request.form.get('wildcard_ospf_remove')
         area_ospf_remove = request.form.get('area_ospf_remove')
         remove_process_id = request.form.get('remove_process_id')
+        rip_version = request.form.get('rip_version')
+        auto_sum = request.form.get('auto_sum')
+        disable_rip = request.form.get('disable_rip')
     
     for device in cisco_devices:
         if device['name'] == device_name:
@@ -643,18 +646,34 @@ def config_routing():
                 if remove_process_id:
                     net_connect = ConnectHandler(**device_info)
                     net_connect.enable()
-                    command = f'no router ospf {remove_process_id}'
+                    command = ['no router ospf ' + remove_process_id]
                     output = net_connect.send_config_set(command)
                     print(output)
                     net_connect.disconnect()
-
                 
-
-            
-
-                    
-
-
+                if rip_version:
+                    command = ['router rip']
+                    if rip_version == 'ripv2':
+                        command.append('version 2')
+                    if auto_sum == 'enable':
+                        command.append('auto-summary')
+                    else:
+                        command.append('no auto-summary')
+                    for i in range(1, 4):
+                        if request.form.get(f'network_rip_{i}'):
+                            command.append('network ' + request.form.get(f'network_rip_{i}'))
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(command)
+                    print(output)
+                    net_connect.disconnect()
+                
+                if disable_rip == 'enable':
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['no router rip'])
+                    print(output)
+                    net_connect.disconnect()
 
 
 
