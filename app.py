@@ -124,6 +124,9 @@ def configure():
         ntp_server = request.form.get('ntp_server')
         ntp_authentication = request.form.get('ntp_authentication')
         ntp_source_interface = request.form.get('ntp_source_interface')
+        clock_timezone = request.form.get('clock_timezone')
+        snmp_server = request.form.get('snmp_server')
+        snmp_trap_level = request.form.get('snmp_trap_level')
 
 
         def parse_vlan_range(raw):
@@ -425,6 +428,29 @@ def configure():
                 if ntp_source_interface:
                     config_commands.append(f'ntp source {ntp_source_interface}')
 
+                if config_commands:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+
+            if clock_timezone:
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['clock timezone ' + clock_timezone])
+                print(output)
+                net_connect.disconnect()
+
+            if snmp_server:
+                config_commands = []
+                snmp_trap_level = request.form.get('snmp_trap_level')
+                
+                if not snmp_trap_level:
+                    snmp_trap_level = 'warning'  # Default to "warning" if not specified
+                config_commands.append(f'logging trap {snmp_trap_level}')
+                config_commands.append(f'logging {snmp_server}')
+                
                 if config_commands:
                     net_connect = ConnectHandler(**device_info)
                     net_connect.enable()

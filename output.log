@@ -1,148 +1,241 @@
-Router>
-Router>terminal width 511
-Router>terminal length 0
-Router>
-Router>
-Router>enable
+
+Switch>
+Switch>terminal width 511
+Switch>terminal length 0
+Switch>
+Switch>
+Switch>enable
 Password: 
-Router#
-Router#
-Router#show running-config
+Switch#
+Switch#
+Switch#show running-config
 Building configuration...
 
-Current configuration : 2029 bytes
+Current configuration : 3357 bytes
 !
-! Last configuration change at 03:40:35 UTC Tue Oct 17 2023 by ********
-!
-version 15.4
+version 12.2
+no service pad
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
 !
-hostname Router
+hostname Switch
 !
 boot-start-marker
 boot-end-marker
 !
+enable secret 5 $1$3q10$EUaZVzHBY7scInLq7G4k//
 !
-enable secret 5 $1$qB9Z$FyYn0lIfvrmVq.1ERSehn1
+username ******** secret 5 $1$947C$CxiVpXHFau11qapi8e2yL1
+username testpass password 7 06120A32585E080A16
+username Supawit privilege 14 secret 5 $1$zKiX$NL/6YMrLUhueNuWNm.ftu0
+username supachai privilege 15 secret 5 $1$Rn9/$RV/.uEgXsz46Zalnq1SD2.
+username ********1 privilege 10 secret 5 $1$ZPOO$bTKrWM09RpfjjZF6IEidb1
+!
 !
 no aaa new-model
+clock timezone UTC 7
+system mtu routing 1500
+!
+!
+ip domain-name test.com
 !
 !
 !
 !
 !
 !
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
 !
 !
 !
+interface FastEthernet0/1
 !
+interface FastEthernet0/2
 !
-!
-!
-!
-
-
-!
-!
-!
-!
-ip domain name test.com
-ip cef
-no ipv6 cef
-multilink bundle-name authenticated
-!
-!
-cts logging verbose
-!
-!
-license udi pid CISCO1921/K9 sn FGL190726U8
-license accept end user agreement
-license boot module c1900 technology-package datak9
-!
-!
-username ******** secret 5 $1$j2qP$95on3SLY1DeHhjeu3VNMd.
-username supawit privilege 14 secret 5 $1$3Oqy$.CE2r/NI8Hwufs31Upkf/0
-username supachai privilege 15 secret 5 $1$5ISA$zHFL15yRaYqROgHz.BWyS/
-username test privilege 15 secret 5 $1$bY.G$yhSJQiSSUfJb06jMFrjqU.
-!
-redundancy
-!
-!
-!
-!
-!
-!
-interface Embedded-Service-Engine0/0
- no ip address
+interface FastEthernet0/3
  shutdown
 !
-interface GigabitEthernet0/0
- ip address 10.4.15.32 255.255.255.0
- duplex auto
- speed auto
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+ shutdown
+!
+interface FastEthernet0/6
+ shutdown
+!
+interface FastEthernet0/7
+ shutdown
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+ shutdown
+!
+interface FastEthernet0/10
+ shutdown
+!
+interface FastEthernet0/11
+ shutdown
+!
+interface FastEthernet0/12
+ shutdown
+!
+interface FastEthernet0/13
+ shutdown
+!
+interface FastEthernet0/14
+ shutdown
+!
+interface FastEthernet0/15
+ shutdown
+!
+interface FastEthernet0/16
+ shutdown
+!
+interface FastEthernet0/17
+ shutdown
+!
+interface FastEthernet0/18
+ shutdown
+!
+interface FastEthernet0/19
+ shutdown
+!
+interface FastEthernet0/20
+ shutdown
+!
+interface FastEthernet0/21
+ shutdown
+!
+interface FastEthernet0/22
+ shutdown
+!
+interface FastEthernet0/23
+ shutdown
+!
+interface FastEthernet0/24
+ shutdown
+!
+interface FastEthernet0/25
+ shutdown
+!
+interface FastEthernet0/26
+ shutdown
+!
+interface FastEthernet0/27
+ shutdown
+!
+interface FastEthernet0/28
+ shutdown
+!
+interface FastEthernet0/29
+ shutdown
+!
+interface FastEthernet0/30
+ shutdown
+!
+interface FastEthernet0/31
+ shutdown
+!
+interface FastEthernet0/32
+ shutdown
+!
+interface FastEthernet0/33
+ shutdown
+!
+interface FastEthernet0/34
+ shutdown
+!
+interface FastEthernet0/35
+ shutdown
+!
+interface FastEthernet0/36
+ shutdown
+!
+interface FastEthernet0/37
+ shutdown
+!
+interface FastEthernet0/38
+ shutdown
+!
+interface FastEthernet0/39
+ shutdown
+!
+interface FastEthernet0/40
+ shutdown
+!
+interface FastEthernet0/41
+ shutdown
+!
+interface FastEthernet0/42
+ shutdown
+!
+interface FastEthernet0/43
+ shutdown
+!
+interface FastEthernet0/44
+ shutdown
+!
+interface FastEthernet0/45
+ shutdown
+!
+interface FastEthernet0/46
+ shutdown
+!
+interface FastEthernet0/47
+ shutdown
+!
+interface FastEthernet0/48
+ shutdown
 !
 interface GigabitEthernet0/1
- ip address 172.16.1.1 255.255.255.240
- duplex auto
- speed auto
 !
-interface Serial0/0/0
- no ip address
- shutdown
- clock rate 2000000
+interface GigabitEthernet0/2
 !
-interface Serial0/0/1
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface Vlan1
+ ip address 10.4.15.31 255.255.255.0
+!
+interface Vlan2
+ ip address 199.199.199.1 255.255.255.0
+!
+interface Vlan10
  no ip address
- shutdown
- clock rate 2000000
+!
+interface Vlan100
+ ip address 123.123.12.1 255.255.255.0
 !
 ip default-gateway 10.4.15.1
-ip forward-protocol nd
-!
-no ip http server
-no ip http secure-server
-!
-ip route 0.0.0.0 0.0.0.0 10.4.15.1
-!
-!
-!
+ip http server
+ip http secure-server
+logging trap warnings
+logging 10.60.131.107
 snmp-server community public RO
 !
-control-plane
-!
-!
-!
 line con 0
- password 7 0012071F145A1815
+ password 7 14141D051C053938
  logging synchronous
  login local
-line aux 0
-line 2
- no activation-character
- no exec
- transport preferred none
- transport output lat pad telnet rlogin lapb-ta mop udptn v120 ssh
- stopbits 1
 line vty 0 4
  password 7 071935555E080A16
  logging synchronous
  login local
- transport input all
+ transport input ssh
 line vty 5 15
  password 7 071935555E080A16
  logging synchronous
  login local
  transport input ssh
 !
-scheduler allocate 20000 1000
 ntp server 10.4.15.1
-!
-!
-pnp profile pnp_profile
- transport http host devicehelper.cisco.com port 80
 end
 
-Router#
-Router#exit
+Switch#
+Switch#exit

@@ -253,12 +253,15 @@
                     <input type="text" id="ntp_authentication" name="ntp_authentication" placeholder="Enter the NTP authentication key (if required)">
                     <br>
                     <input type="text" id="ntp_source_interface" name="ntp_source_interface" placeholder="Enter the source interface for NTP (e.g., GigabitEthernet0/0)">
-                    <br><br><br>
+                    <br>
+                    <input type="text" id="clock_timezone" name="clock_timezone" placeholder="Clock Timezone (e.g., UTC +7)">
+                    <br><br>
                     <h2 style="color: #2e4ead; text-align: left;">SNMP Trap Logging Configuration</h2><br>
                     <input type="text" id="snmp_server" name="snmp_server" placeholder="Enter the SNMP server IP">
                     <br>
                     <label for="level_trap" style="margin-right: 92%;font-weight: bold;">Trap Level</label>
                     <select id="snmp_trap_level" name="snmp_trap_level">
+                        <option value="none">None</option>
                         <option value="informational">Informational</option>
                         <option value="warning">Warning</option>
                         <option value="error">Error</option>
