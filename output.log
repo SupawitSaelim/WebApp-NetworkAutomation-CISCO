@@ -8,13 +8,22 @@ Switch>enable
 Password: 
 Switch#
 Switch#
-Switch#configure terminal
-Enter configuration commands, one per line.  End with CNTL/Z.
-Switch(config)#
-Switch(config)#interface range fa0/4-20
-Switch(config-if-range)#switchport mode trunk
-Switch(config-if-range)#
-Switch(config-if-range)#end
-Switch#
+Switch#show vlan id 123
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+123  VLAN0123                         active    Fa0/21, Fa0/22, Fa0/23, Fa0/24, Fa0/25
+
+VLAN Type  SAID       MTU   Parent RingNo BridgeNo Stp  BrdgMode Trans1 Trans2
+---- ----- ---------- ----- ------ ------ -------- ---- -------- ------ ------
+123  enet  100123     1500  -      -      -        -    -        0      0   
+
+Remote SPAN VLAN
+----------------
+Disabled
+
+Primary Secondary Type              Ports
+------- --------- ----------------- ------------------------------------------
+
 Switch#
 Switch#exit

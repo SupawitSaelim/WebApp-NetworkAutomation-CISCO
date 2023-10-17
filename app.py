@@ -768,6 +768,8 @@ def show_config():
     if request.method == 'POST':
         device_name = request.form.get('device_name')
         selected_commands = request.form.getlist('selected_commands')  # Get all selected commands as a list
+        vlan_id = request.form.get('vlan_id')
+        print(vlan_id)
 
         for device in cisco_devices:
             if device['name'] == device_name:
@@ -829,7 +831,42 @@ def show_config():
                         net_connect.enable()
                         output = net_connect.send_command('show ip protocols')
                         net_connect.disconnect()
-                        config_data += "===== show ip protocols =====\n" + output + "\n"             
+                        config_data += "===== show ip protocols =====\n" + output + "\n"
+
+                    if "show_mac_address_table" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show mac address-table dynamic')
+                        net_connect.disconnect()
+                        config_data += "===== show mac address-table =====\n" + output + "\n"
+
+                    if "show_clock" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show clock')
+                        net_connect.disconnect()
+                        config_data += "===== show clock =====\n" + output + "\n"
+
+                    if "show_logging" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show logging')
+                        net_connect.disconnect()
+                        config_data += "===== show logging =====\n" + output + "\n"
+
+                    if "show_interfaces_trunk" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show interfaces trunk')
+                        net_connect.disconnect()
+                        config_data += "===== show interfaces trunk =====\n" + output + "\n"      
+
+                    if vlan_id :
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command(f'show vlan id {vlan_id}')
+                        net_connect.disconnect()
+                        config_data += "===== show vlan id =====\n" + output + "\n"       
 
                     return render_template('showconfig.html', cisco_devices=cisco_devices, config_data=config_data)
 
@@ -839,7 +876,6 @@ def show_config():
                     return render_template('showconfig.html', cisco_devices=cisco_devices, error_message=error_message)
 
     return render_template('showconfig.html', cisco_devices=cisco_devices)
-
 
 def is_ssh_reachable(ip, username, password):
     try:
