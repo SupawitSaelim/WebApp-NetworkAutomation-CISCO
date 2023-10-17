@@ -1,14 +1,13 @@
-
-SWITCH-TEST-AUTOMATION>
-SWITCH-TEST-AUTOMATION>terminal width 511
-SWITCH-TEST-AUTOMATION>terminal length 0
-SWITCH-TEST-AUTOMATION>
-SWITCH-TEST-AUTOMATION>
-SWITCH-TEST-AUTOMATION>enable
+Router>
+Router>terminal width 511
+Router>terminal length 0
+Router>
+Router>
+Router>enable
 Password: 
-SWITCH-TEST-AUTOMATION#
-SWITCH-TEST-AUTOMATION#write
+Router#
+Router#write
 Building configuration...
 [OK]
-SWITCH-TEST-AUTOMATION#
-SWITCH-TEST-AUTOMATION#exit
+Router#
+Router#exit

@@ -173,6 +173,294 @@ def configure():
                     ip_list.append(ip)
                     subnet_mask_list.append(subnet_mask)
 
+        def configuration(device_info, device):
+
+            if hostname:
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['hostname ' + hostname])
+                print(output)
+                net_connect.disconnect()
+                device['name'] = hostname
+
+            if secret_password:
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['enable secret ' + secret_password])
+                print(output)
+                net_connect.disconnect()
+
+                device['device_info']['secret'] = secret_password
+            
+            if interface_list and ip_list and subnet_mask_list:
+                try:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    config_commands = []
+
+                    for interface, ip, subnet_mask in zip(interface_list, ip_list, subnet_mask_list):
+                        if active_interfaces == "enable":
+                            config_commands.append('interface ' + interface)
+                            config_commands.append('ip address ' + ip + ' ' + subnet_mask)
+                            config_commands.append('no shutdown')
+                        elif deactivate_interfaces == "enable":
+                            config_commands.append('interface ' + interface)
+                            config_commands.append('no ip address ' + ip + ' ' + subnet_mask)
+                            config_commands.append('shutdown')
+
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+                except Exception as e:
+                    print("An error occurred:", str(e))
+            else:
+                print("One or more required lists are empty (raw_interfaces, ip_list, subnet_mask_list).")
+            
+            if interface_list and active_interfaces == "enable" or deactivate_interfaces == "enable":
+                for interface in interface_list:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    config_commands = []
+                    if active_interfaces == "enable":
+                        config_commands.append('interface range ' + interface)
+                        config_commands.append('no shutdown')
+                    elif deactivate_interfaces == "enable":
+                        config_commands.append('interface range ' + interface)
+                        config_commands.append('shutdown')
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+
+            if vlan_id_list :
+                for vlan_id in vlan_id_list:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    config_commands = []
+                    config_commands.append('vlan ' + str(vlan_id))
+                    if vlan_name:
+                        config_commands.append('name ' + vlan_name + '_' + str(vlan_id))
+                    if active_vlan == "enable":
+                        config_commands.append('no shutdown')
+                    elif deactive_vlan == "enable":
+                        config_commands.append('shutdown')
+                    else:
+                        pass
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+            
+            if vlan_id_del_list:
+                for vlan_id_del in vlan_id_del_list:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    config_commands = []
+                    config_commands.append('no vlan ' + str(vlan_id_del))
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+
+            if default_gateway:
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['ip default-gateway ' + default_gateway])
+                print(output)
+                net_connect.disconnect()
+
+            if new_username and new_password and level_privilege:
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(
+                    ['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
+                print(output)
+                net_connect.disconnect()
+            
+            if console_login_method != 'none':
+                if console_login_method == 'login':
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    commands = ['line console 0', 'login']
+                    output = net_connect.send_config_set(commands)
+                    print(output)
+                    net_connect.disconnect()
+                elif console_login_method == 'login_local':
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    commands = ['line console 0', 'login local']
+                    output = net_connect.send_config_set(commands)
+                    print(output)
+                    net_connect.disconnect()
+                elif console_login_method == 'no_login':
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    commands = ['line console 0', 'no login']
+                    output = net_connect.send_config_set(commands)
+                    print(output)
+                    net_connect.disconnect()
+            
+            if console_password:
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['line console 0', 'password ' + console_password])
+                print(output)
+                net_connect.disconnect()
+            
+            if console_timeout:
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['line console 0', 'exec-timeout ' + console_timeout + ' 0'])
+                print(output)
+                net_connect.disconnect()
+            
+            if enable_loggin_syn_con == 'enable':
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['line console 0', 'logging synchronous'])
+                print(output)
+                net_connect.disconnect()
+
+            if vty_login_method != 'none':
+                if vty_login_method == 'login':
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    commands = []
+                    if vty_range:
+                        commands.append('line vty ' + vty_range)
+                        commands.append('login')
+                    else:
+                        commands.append('line vty 0 4')
+                        commands.append('login')
+                    output = net_connect.send_config_set(commands)
+                    print(output)
+                    net_connect.disconnect()
+                elif vty_login_method == 'login_local':
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    commands = []
+                    if vty_range:
+                        commands.append('line vty ' + vty_range)
+                        commands.append('login local')
+                    else:
+                        commands.append('line vty 0 4')
+                        commands.append('login local')
+                    output = net_connect.send_config_set(commands)
+                    print(output)
+                    net_connect.disconnect()
+                elif vty_login_method == 'no_login':
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    commands = []
+                    if vty_range:
+                        commands.append('line vty ' + vty_range)
+                        commands.append('no login')
+                    else:
+                        commands.append('line vty 0 4')
+                        commands.append('no login')
+                    output = net_connect.send_config_set(commands)
+                    print(output)
+                    net_connect.disconnect()
+
+            if vty_password:
+                if vty_range:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['line vty ' + vty_range, 'password ' + vty_password])
+                    print(output)
+                    net_connect.disconnect()
+                else:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['line vty 0 4', 'password ' + vty_password])
+                    print(output)
+                    net_connect.disconnect()
+            
+            if vty_timeout:
+                if vty_range:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['line vty ' + vty_range, 'exec-timeout ' + vty_timeout + ' 0'])
+                    print(output)
+                    net_connect.disconnect()
+                else:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['line vty 0 4', 'exec-timeout ' + vty_timeout + ' 0'])
+                    print(output)
+                    net_connect.disconnect()
+            
+            if vty_transport != 'none':
+                if vty_range:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['line vty ' + vty_range, 'transport ' + vty_transport])
+                    print(output)
+                    net_connect.disconnect()
+                else:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['line vty 0 4', 'transport input ' + vty_transport])
+                    print(output)
+                    net_connect.disconnect()
+            
+            if enable_loggin_syn_vty == 'enable':
+                if vty_range:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['line vty ' + vty_range, 'logging synchronous'])
+                    print(output)
+                    net_connect.disconnect()
+                else:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(['line vty 0 4', 'logging synchronous'])
+                    print(output)
+                    net_connect.disconnect()
+
+            if ntp_server:
+                config_commands = []
+                config_commands.append(f'ntp server {ntp_server}')
+                if ntp_authentication:
+                    config_commands.append(f'ntp authentication-key 1 md5 {ntp_authentication}')
+                    config_commands.append('ntp trusted-key 1')
+                    config_commands.append('ntp update-calendar')
+                if ntp_source_interface:
+                    config_commands.append(f'ntp source {ntp_source_interface}')
+
+                if config_commands:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+
+            if service_password_encryption == "enable":
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['service password-encryption'])
+                print(output)
+                net_connect.disconnect()
+
+            if enable_snmp == "enable":
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['snmp-server community public RO'])
+                print(output)
+                net_connect.disconnect()
+
+            if enable_cdp == "enable":
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_config_set(['cdp run'])
+                print(output)
+                net_connect.disconnect()
+
+            if save_config == "enable":
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                output = net_connect.send_command_timing('write')
+                print(output)
+                net_connect.disconnect()
+
+
         # many hostname
         if many_hostname:
             many_names = [name.strip() for name in many_hostname.split(',')]
@@ -188,292 +476,8 @@ def configure():
 
                                 if not is_ssh_reachable(ip, device_info['username'], device_info['password']):
                                     return '<script>alert("SSH connection failed. Make sure SSH is enabled and credentials are correct."); window.location.href="/basicedit";</script>'
-
-                                if hostname:
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['hostname ' + hostname])
-                                    print(output)
-                                    net_connect.disconnect()
-                                    device['name'] = hostname
-
-                                if secret_password:
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['enable secret ' + secret_password])
-                                    print(output)
-                                    net_connect.disconnect()
-
-                                    device['device_info']['secret'] = secret_password
                                 
-                                if interface_list and ip_list and subnet_mask_list:
-                                    try:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        config_commands = []
-
-                                        for interface, ip, subnet_mask in zip(interface_list, ip_list, subnet_mask_list):
-                                            if active_interfaces == "enable":
-                                                config_commands.append('interface ' + interface)
-                                                config_commands.append('ip address ' + ip + ' ' + subnet_mask)
-                                                config_commands.append('no shutdown')
-                                            elif deactivate_interfaces == "enable":
-                                                config_commands.append('interface ' + interface)
-                                                config_commands.append('no ip address ' + ip + ' ' + subnet_mask)
-                                                config_commands.append('shutdown')
-
-                                        output = net_connect.send_config_set(config_commands)
-                                        print(output)
-                                        net_connect.disconnect()
-                                    except Exception as e:
-                                        print("An error occurred:", str(e))
-                                else:
-                                    print("One or more required lists are empty (raw_interfaces, ip_list, subnet_mask_list).")
-                                
-                                if interface_list and active_interfaces == "enable" or deactivate_interfaces == "enable":
-                                    for interface in interface_list:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        config_commands = []
-                                        if active_interfaces == "enable":
-                                            config_commands.append('interface range ' + interface)
-                                            config_commands.append('no shutdown')
-                                        elif deactivate_interfaces == "enable":
-                                            config_commands.append('interface range ' + interface)
-                                            config_commands.append('shutdown')
-                                        output = net_connect.send_config_set(config_commands)
-                                        print(output)
-                                        net_connect.disconnect()
-
-                                if vlan_id_list :
-                                    for vlan_id in vlan_id_list:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        config_commands = []
-                                        config_commands.append('vlan ' + str(vlan_id))
-                                        if vlan_name:
-                                            config_commands.append('name ' + vlan_name + '_' + str(vlan_id))
-                                        if active_vlan == "enable":
-                                            config_commands.append('no shutdown')
-                                        elif deactive_vlan == "enable":
-                                            config_commands.append('shutdown')
-                                        else:
-                                            pass
-                                        output = net_connect.send_config_set(config_commands)
-                                        print(output)
-                                        net_connect.disconnect()
-                                
-                                if vlan_id_del_list:
-                                    for vlan_id_del in vlan_id_del_list:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        config_commands = []
-                                        config_commands.append('no vlan ' + str(vlan_id_del))
-                                        output = net_connect.send_config_set(config_commands)
-                                        print(output)
-                                        net_connect.disconnect()
-
-                                if default_gateway:
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['ip default-gateway ' + default_gateway])
-                                    print(output)
-                                    net_connect.disconnect()
-
-                                if new_username and new_password and level_privilege:
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(
-                                        ['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
-                                    print(output)
-                                    net_connect.disconnect()
-                                
-                                if console_login_method != 'none':
-                                    if console_login_method == 'login':
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        commands = ['line console 0', 'login']
-                                        output = net_connect.send_config_set(commands)
-                                        print(output)
-                                        net_connect.disconnect()
-                                    elif console_login_method == 'login_local':
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        commands = ['line console 0', 'login local']
-                                        output = net_connect.send_config_set(commands)
-                                        print(output)
-                                        net_connect.disconnect()
-                                    elif console_login_method == 'no_login':
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        commands = ['line console 0', 'no login']
-                                        output = net_connect.send_config_set(commands)
-                                        print(output)
-                                        net_connect.disconnect()
-                                
-                                if console_password:
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['line console 0', 'password ' + console_password])
-                                    print(output)
-                                    net_connect.disconnect()
-                                
-                                if console_timeout:
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['line console 0', 'exec-timeout ' + console_timeout + ' 0'])
-                                    print(output)
-                                    net_connect.disconnect()
-                                
-                                if enable_loggin_syn_con == 'enable':
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['line console 0', 'logging synchronous'])
-                                    print(output)
-                                    net_connect.disconnect()
-
-                                if vty_login_method != 'none':
-                                    if vty_login_method == 'login':
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        commands = []
-                                        if vty_range:
-                                            commands.append('line vty ' + vty_range)
-                                            commands.append('login')
-                                        else:
-                                            commands.append('line vty 0 4')
-                                            commands.append('login')
-                                        output = net_connect.send_config_set(commands)
-                                        print(output)
-                                        net_connect.disconnect()
-                                    elif vty_login_method == 'login_local':
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        commands = []
-                                        if vty_range:
-                                            commands.append('line vty ' + vty_range)
-                                            commands.append('login local')
-                                        else:
-                                            commands.append('line vty 0 4')
-                                            commands.append('login local')
-                                        output = net_connect.send_config_set(commands)
-                                        print(output)
-                                        net_connect.disconnect()
-                                    elif vty_login_method == 'no_login':
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        commands = []
-                                        if vty_range:
-                                            commands.append('line vty ' + vty_range)
-                                            commands.append('no login')
-                                        else:
-                                            commands.append('line vty 0 4')
-                                            commands.append('no login')
-                                        output = net_connect.send_config_set(commands)
-                                        print(output)
-                                        net_connect.disconnect()
-
-                                if vty_password:
-                                    if vty_range:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(['line vty ' + vty_range, 'password ' + vty_password])
-                                        print(output)
-                                        net_connect.disconnect()
-                                    else:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(['line vty 0 4', 'password ' + vty_password])
-                                        print(output)
-                                        net_connect.disconnect()
-                                
-                                if vty_timeout:
-                                    if vty_range:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(['line vty ' + vty_range, 'exec-timeout ' + vty_timeout + ' 0'])
-                                        print(output)
-                                        net_connect.disconnect()
-                                    else:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(['line vty 0 4', 'exec-timeout ' + vty_timeout + ' 0'])
-                                        print(output)
-                                        net_connect.disconnect()
-                                
-                                if vty_transport != 'none':
-                                    if vty_range:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(['line vty ' + vty_range, 'transport ' + vty_transport])
-                                        print(output)
-                                        net_connect.disconnect()
-                                    else:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(['line vty 0 4', 'transport input ' + vty_transport])
-                                        print(output)
-                                        net_connect.disconnect()
-                                
-                                if enable_loggin_syn_vty == 'enable':
-                                    if vty_range:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(['line vty ' + vty_range, 'logging synchronous'])
-                                        print(output)
-                                        net_connect.disconnect()
-                                    else:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(['line vty 0 4', 'logging synchronous'])
-                                        print(output)
-                                        net_connect.disconnect()
-
-                                if ntp_server:
-                                    config_commands = []
-                                    config_commands.append(f'ntp server {ntp_server}')
-                                    if ntp_authentication:
-                                        config_commands.append(f'ntp authentication-key 1 md5 {ntp_authentication}')
-                                        config_commands.append('ntp trusted-key 1')
-                                        config_commands.append('ntp update-calendar')
-                                    if ntp_source_interface:
-                                        config_commands.append(f'ntp source {ntp_source_interface}')
-
-                                    if config_commands:
-                                        net_connect = ConnectHandler(**device_info)
-                                        net_connect.enable()
-                                        output = net_connect.send_config_set(config_commands)
-                                        print(output)
-                                        net_connect.disconnect()
-
-                                if service_password_encryption == "enable":
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['service password-encryption'])
-                                    print(output)
-                                    net_connect.disconnect()
-
-                                if enable_snmp == "enable":
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['snmp-server community public RO'])
-                                    print(output)
-                                    net_connect.disconnect()
-
-                                if enable_cdp == "enable":
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_config_set(['cdp run'])
-                                    print(output)
-                                    net_connect.disconnect()
-
-                                if save_config == "enable":
-                                    net_connect = ConnectHandler(**device_info)
-                                    net_connect.enable()
-                                    output = net_connect.send_command_timing('write')
-                                    print(output)
-                                    net_connect.disconnect()
-
+                                configuration(device_info, device)
 
                         with open(json_file_path, 'w') as f:
                             json.dump(cisco_devices, f, indent=4)
@@ -497,289 +501,7 @@ def configure():
                     if not is_ssh_reachable(ip, device_info['username'], device_info['password']):
                         return '<script>alert("SSH connection failed. Make sure SSH is enabled and credentials are correct."); window.location.href="/basicedit";</script>'
 
-                    if hostname:
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['hostname ' + hostname])
-                        print(output)
-                        net_connect.disconnect()
-                        device['name'] = hostname
-
-                    if secret_password:
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['enable secret ' + secret_password])
-                        print(output)
-                        net_connect.disconnect()
-
-                        device['device_info']['secret'] = secret_password
-
-                    if interface_list and ip_list and subnet_mask_list:
-                        try:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            config_commands = []
-
-                            for interface, ip, subnet_mask in zip(interface_list, ip_list, subnet_mask_list):
-                                if active_interfaces == "enable":
-                                    config_commands.append('interface ' + interface)
-                                    config_commands.append('ip address ' + ip + ' ' + subnet_mask)
-                                    config_commands.append('no shutdown')
-                                elif deactivate_interfaces == "enable":
-                                    config_commands.append('interface ' + interface)
-                                    config_commands.append('no ip address ' + ip + ' ' + subnet_mask)
-                                    config_commands.append('shutdown')
-                            output = net_connect.send_config_set(config_commands)
-                            print(output)
-                            net_connect.disconnect()
-                        except Exception as e:
-                            print("An error occurred:", str(e))
-                    else:
-                        print("One or more required lists are empty (raw_interfaces, ip_list, subnet_mask_list).")
-                    
-                    if interface_list and active_interfaces == "enable" or deactivate_interfaces == "enable":
-                        for interface in interface_list:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            config_commands = []
-                            if active_interfaces == "enable":
-                                config_commands.append('interface range ' + interface)
-                                config_commands.append('no shutdown')
-                            elif deactivate_interfaces == "enable":
-                                config_commands.append('interface range ' + interface)
-                                config_commands.append('shutdown')
-                            output = net_connect.send_config_set(config_commands)
-                            print(output)
-                            net_connect.disconnect()
-
-                    if vlan_id_list :
-                        for vlan_id in vlan_id_list:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            config_commands = []
-                            config_commands.append('vlan ' + str(vlan_id))
-                            if vlan_name:
-                                config_commands.append('name ' + vlan_name + '_' + str(vlan_id))
-                            if active_vlan == "enable":
-                                config_commands.append('no shutdown')
-                            elif deactive_vlan == "enable":
-                                config_commands.append('shutdown')
-                            else:
-                                pass
-                            output = net_connect.send_config_set(config_commands)
-                            print(output)
-                            net_connect.disconnect()
-                    
-                    if vlan_id_del_list:
-                        for vlan_id_del in vlan_id_del_list:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            config_commands = []
-                            config_commands.append('no vlan ' + str(vlan_id_del))
-                            output = net_connect.send_config_set(config_commands)
-                            print(output)
-                            net_connect.disconnect()
-                            
-                    if default_gateway:
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['ip default-gateway ' + default_gateway])
-                        print(output)
-                        net_connect.disconnect()
-
-                    if new_username and new_password and level_privilege:
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(
-                            ['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
-                        print(output)
-                        net_connect.disconnect()
-
-                    if console_login_method != 'none':
-                        if console_login_method == 'login':
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            commands = ['line console 0', 'login']
-                            output = net_connect.send_config_set(commands)
-                            print(output)
-                            net_connect.disconnect()
-                        elif console_login_method == 'login_local':
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            commands = ['line console 0', 'login local']
-                            output = net_connect.send_config_set(commands)
-                            print(output)
-                            net_connect.disconnect()
-                        elif console_login_method == 'no_login':
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            commands = ['line console 0', 'no login']
-                            output = net_connect.send_config_set(commands)
-                            print(output)
-                            net_connect.disconnect()
-                    
-                    if console_password:
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['line console 0', 'password ' + console_password])
-                        print(output)
-                        net_connect.disconnect()
-                    
-                    if console_timeout:
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['line console 0', 'exec-timeout ' + console_timeout + ' 0'])
-                        print(output)
-                        net_connect.disconnect()
-                    
-                    if enable_loggin_syn_con == 'enable':
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['line console 0', 'logging synchronous'])
-                        print(output)
-                        net_connect.disconnect()
-
-                    if vty_login_method != 'none':
-                        if vty_login_method == 'login':
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            commands = []
-                            if vty_range:
-                                commands.append('line vty ' + vty_range)
-                                commands.append('login')
-                            else:
-                                commands.append('line vty 0 4')
-                                commands.append('login')
-                            output = net_connect.send_config_set(commands)
-                            print(output)
-                            net_connect.disconnect()
-                        elif vty_login_method == 'login_local':
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            commands = []
-                            if vty_range:
-                                commands.append('line vty ' + vty_range)
-                                commands.append('login local')
-                            else:
-                                commands.append('line vty 0 4')
-                                commands.append('login local')
-                            output = net_connect.send_config_set(commands)
-                            print(output)
-                            net_connect.disconnect()
-                        elif vty_login_method == 'no_login':
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            commands = []
-                            if vty_range:
-                                commands.append('line vty ' + vty_range)
-                                commands.append('no login')
-                            else:
-                                commands.append('line vty 0 4')
-                                commands.append('no login')
-                            output = net_connect.send_config_set(commands)
-                            print(output)
-                            net_connect.disconnect()
-
-                    if vty_password:
-                        if vty_range:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(['line vty ' + vty_range, 'password ' + vty_password])
-                            print(output)
-                            net_connect.disconnect()
-                        else:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(['line vty 0 4', 'password ' + vty_password])
-                            print(output)
-                            net_connect.disconnect()
-                    
-                    if vty_timeout:
-                        if vty_range:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(['line vty ' + vty_range, 'exec-timeout ' + vty_timeout + ' 0'])
-                            print(output)
-                            net_connect.disconnect()
-                        else:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(['line vty 0 4', 'exec-timeout ' + vty_timeout + ' 0'])
-                            print(output)
-                            net_connect.disconnect()
-                    
-                    if vty_transport != 'none':
-                        if vty_range:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(['line vty ' + vty_range, 'transport ' + vty_transport])
-                            print(output)
-                            net_connect.disconnect()
-                        else:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(['line vty 0 4', 'transport input ' + vty_transport])
-                            print(output)
-                            net_connect.disconnect()
-                    
-                    if enable_loggin_syn_vty == 'enable':
-                        if vty_range:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(['line vty ' + vty_range, 'logging synchronous'])
-                            print(output)
-                            net_connect.disconnect()
-                        else:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(['line vty 0 4', 'logging synchronous'])
-                            print(output)
-                            net_connect.disconnect()
-
-                    if ntp_server:
-                        config_commands = []
-                        config_commands.append(f'ntp server {ntp_server}')
-                        if ntp_authentication:
-                            config_commands.append(f'ntp authentication-key 1 md5 {ntp_authentication}')
-                            config_commands.append('ntp trusted-key 1')
-                            config_commands.append('ntp update-calendar')
-                        if ntp_source_interface:
-                            config_commands.append(f'ntp source {ntp_source_interface}')
-
-                        if config_commands:
-                            net_connect = ConnectHandler(**device_info)
-                            net_connect.enable()
-                            output = net_connect.send_config_set(config_commands)
-                            print(output)
-                            net_connect.disconnect()
-
-                    if service_password_encryption == "enable":
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['service password-encryption'])
-                        print(output)
-                        net_connect.disconnect()
-
-                    if enable_snmp == "enable":
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['snmp-server community public RO'])
-                        print(output)
-                        net_connect.disconnect()
-
-                    if enable_cdp == "enable":
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_config_set(['cdp run'])
-                        print(output)
-                        net_connect.disconnect()
-
-                    if save_config == "enable":
-                        net_connect = ConnectHandler(**device_info)
-                        net_connect.enable()
-                        output = net_connect.send_command_timing('write')
-                        print(output)
-                        net_connect.disconnect()
+                    configuration(device_info, device)
 
             with open(json_file_path, 'w') as f:
                 json.dump(cisco_devices, f, indent=4)
