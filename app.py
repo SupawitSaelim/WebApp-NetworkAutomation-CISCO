@@ -486,7 +486,6 @@ def configure():
                 print(output)
                 net_connect.disconnect()
 
-
         # many hostname
         if many_hostname:
             many_names = [name.strip() for name in many_hostname.split(',')]
