@@ -391,7 +391,7 @@ def configure():
                 if vty_range:
                     net_connect = ConnectHandler(**device_info)
                     net_connect.enable()
-                    output = net_connect.send_config_set(['line vty ' + vty_range, 'transport ' + vty_transport])
+                    output = net_connect.send_config_set(['line vty ' + vty_range, 'transport input' + vty_transport])
                     print(output)
                     net_connect.disconnect()
                 else:
