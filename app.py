@@ -121,6 +121,10 @@ def configure():
         vty_transport = request.form.get('vty_transport')
         vty_range = request.form.get('vty_range')
         enable_loggin_syn_vty = request.form.get('enable_loggin_syn_vty')
+        ntp_server = request.form.get('ntp_server')
+        ntp_authentication = request.form.get('ntp_authentication')
+        ntp_source_interface = request.form.get('ntp_source_interface')
+
 
         def parse_vlan_range(raw):
             ranges = raw.split(',')
@@ -425,6 +429,23 @@ def configure():
                                         print(output)
                                         net_connect.disconnect()
 
+                                if ntp_server:
+                                    config_commands = []
+                                    config_commands.append(f'ntp server {ntp_server}')
+                                    if ntp_authentication:
+                                        config_commands.append(f'ntp authentication-key 1 md5 {ntp_authentication}')
+                                        config_commands.append('ntp trusted-key 1')
+                                        config_commands.append('ntp update-calendar')
+                                    if ntp_source_interface:
+                                        config_commands.append(f'ntp source {ntp_source_interface}')
+
+                                    if config_commands:
+                                        net_connect = ConnectHandler(**device_info)
+                                        net_connect.enable()
+                                        output = net_connect.send_config_set(config_commands)
+                                        print(output)
+                                        net_connect.disconnect()
+
                                 if service_password_encryption == "enable":
                                     net_connect = ConnectHandler(**device_info)
                                     net_connect.enable()
@@ -452,6 +473,7 @@ def configure():
                                     output = net_connect.send_command_timing('write')
                                     print(output)
                                     net_connect.disconnect()
+
 
                         with open(json_file_path, 'w') as f:
                             json.dump(cisco_devices, f, indent=4)
@@ -711,6 +733,23 @@ def configure():
                             net_connect = ConnectHandler(**device_info)
                             net_connect.enable()
                             output = net_connect.send_config_set(['line vty 0 4', 'logging synchronous'])
+                            print(output)
+                            net_connect.disconnect()
+
+                    if ntp_server:
+                        config_commands = []
+                        config_commands.append(f'ntp server {ntp_server}')
+                        if ntp_authentication:
+                            config_commands.append(f'ntp authentication-key 1 md5 {ntp_authentication}')
+                            config_commands.append('ntp trusted-key 1')
+                            config_commands.append('ntp update-calendar')
+                        if ntp_source_interface:
+                            config_commands.append(f'ntp source {ntp_source_interface}')
+
+                        if config_commands:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(config_commands)
                             print(output)
                             net_connect.disconnect()
 
