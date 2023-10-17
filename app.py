@@ -476,6 +476,104 @@ def configure():
                         print(output)
                         net_connect.disconnect()
 
+                    if vty_login_method != 'none':
+                        if vty_login_method == 'login':
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            commands = []
+                            if vty_range:
+                                commands.append('line vty ' + vty_range)
+                                commands.append('login')
+                            else:
+                                commands.append('line vty 0 4')
+                                commands.append('login')
+                            output = net_connect.send_config_set(commands)
+                            print(output)
+                            net_connect.disconnect()
+                        elif vty_login_method == 'login_local':
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            commands = []
+                            if vty_range:
+                                commands.append('line vty ' + vty_range)
+                                commands.append('login local')
+                            else:
+                                commands.append('line vty 0 4')
+                                commands.append('login local')
+                            output = net_connect.send_config_set(commands)
+                            print(output)
+                            net_connect.disconnect()
+                        elif vty_login_method == 'no_login':
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            commands = []
+                            if vty_range:
+                                commands.append('line vty ' + vty_range)
+                                commands.append('no login')
+                            else:
+                                commands.append('line vty 0 4')
+                                commands.append('no login')
+                            output = net_connect.send_config_set(commands)
+                            print(output)
+                            net_connect.disconnect()
+
+                    if vty_password:
+                        if vty_range:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(['line vty ' + vty_range, 'password ' + vty_password])
+                            print(output)
+                            net_connect.disconnect()
+                        else:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(['line vty 0 4', 'password ' + vty_password])
+                            print(output)
+                            net_connect.disconnect()
+                    
+                    if vty_timeout:
+                        if vty_range:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(['line vty ' + vty_range, 'exec-timeout ' + vty_timeout + ' 0'])
+                            print(output)
+                            net_connect.disconnect()
+                        else:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(['line vty 0 4', 'exec-timeout ' + vty_timeout + ' 0'])
+                            print(output)
+                            net_connect.disconnect()
+                    
+                    if vty_transport != 'none':
+                        if vty_range:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(['line vty ' + vty_range, 'transport ' + vty_transport])
+                            print(output)
+                            net_connect.disconnect()
+                        else:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(['line vty 0 4', 'transport input ' + vty_transport])
+                            print(output)
+                            net_connect.disconnect()
+                    
+                    if enable_loggin_syn_vty == 'enable':
+                        if vty_range:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(['line vty ' + vty_range, 'logging synchronous'])
+                            print(output)
+                            net_connect.disconnect()
+                        else:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(['line vty 0 4', 'logging synchronous'])
+                            print(output)
+                            net_connect.disconnect()
+
+
                     if service_password_encryption == "enable":
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()

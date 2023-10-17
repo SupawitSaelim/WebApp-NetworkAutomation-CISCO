@@ -1,14 +1,149 @@
 
-SWITCH-TEST-AUTOMATION>
-SWITCH-TEST-AUTOMATION>terminal width 511
-SWITCH-TEST-AUTOMATION>terminal length 0
-SWITCH-TEST-AUTOMATION>
-SWITCH-TEST-AUTOMATION>
-SWITCH-TEST-AUTOMATION>enable
+Router-TEST-automation>
+Router-TEST-automation>terminal width 511
+Router-TEST-automation>terminal length 0
+Router-TEST-automation>
+Router-TEST-automation>
+Router-TEST-automation>enable
 Password: 
-SWITCH-TEST-AUTOMATION#
-SWITCH-TEST-AUTOMATION#write
+Router-TEST-automation#
+Router-TEST-automation#
+Router-TEST-automation#show running-config
 Building configuration...
-[OK]
-SWITCH-TEST-AUTOMATION#
-SWITCH-TEST-AUTOMATION#exit
+
+Current configuration : 2012 bytes
+!
+! Last configuration change at 03:09:08 UTC Tue Oct 17 2023 by ********
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname Router-TEST-automation
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$CvB.$8eet54sZ64OiM20bjtXfQ1
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip domain name test.com
+ip cef
+no ipv6 cef
+multilink bundle-name authenticated
+!
+!
+cts logging verbose
+!
+!
+license udi pid CISCO1921/K9 sn FGL190726U8
+license accept end user agreement
+license boot module c1900 technology-package datak9
+!
+!
+username ******** secret 5 $1$j2qP$95on3SLY1DeHhjeu3VNMd.
+username supawit privilege 14 secret 5 $1$3Oqy$.CE2r/NI8Hwufs31Upkf/0
+username supachai privilege 15 secret 5 $1$5ISA$zHFL15yRaYqROgHz.BWyS/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+interface Embedded-Service-Engine0/0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/0
+ ip address 10.4.15.32 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ ip address 177.17.17.17 255.0.0.0
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ no ip address
+ shutdown
+ clock rate 2000000
+!
+interface Serial0/0/1
+ no ip address
+ shutdown
+ clock rate 2000000
+!
+ip default-gateway 10.4.15.1
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+ip route 0.0.0.0 0.0.0.0 10.4.15.1
+!
+!
+!
+snmp-server community public RO
+!
+control-plane
+!
+!
+!
+line con 0
+ exec-timeout 5 0
+ password 7 0012071F145A1815
+ logging synchronous
+line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport output lat pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
+line vty 0 4
+ exec-timeout 20 0
+ password 7 06101B385C4F1A0A1112011F
+ logging synchronous
+ login local
+ transport input all
+line vty 5 15
+ exec-timeout 20 0
+ password 7 06101B385C4F1A0A1112011F
+ logging synchronous
+ login local
+ transport input ssh
+!
+scheduler allocate 20000 1000
+!
+!
+pnp profile pnp_profile
+ transport http host devicehelper.cisco.com port 80
+end
+
+Router-TEST-automation#
+Router-TEST-automation#exit
