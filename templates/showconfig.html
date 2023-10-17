@@ -121,7 +121,11 @@
     
     .label-text {
       display: inline-block;
+      margin-bottom: 3%;
       vertical-align: middle;
+      color: #2e4ead;
+      text-transform: uppercase;
+      font-weight: bold;
       margin-left: 10px; /* Adjust the margin as needed */
     }
 
@@ -244,7 +248,6 @@
                     
                     <div class="checkbox-container">
                         <div class="checkbox-wrapper-23 left">
-                            <!-- แท็ก checkbox ฝั่งซ้าย -->
                             <input type="checkbox" id="show_running_config" name="selected_commands" class="checkbox-input" value="show_running_config">
                             <label for="show_running_config" style="--size: 30px">
                                 <svg viewBox="0,0,50,50">
@@ -252,7 +255,6 @@
                                 </svg>
                             </label>
                             <span class="label-text">show running-config</span>
-
                             <div class="checkbox-wrapper-23">
                                 <input type="checkbox" id="show_interfaces" name="selected_commands" class="checkbox-input" value="show_interfaces">
                                 <label for="show_interfaces" style="--size: 30px">
@@ -262,7 +264,6 @@
                                 </label>
                                 <span class ="label-text">show interface</span>
                             </div>
-
                             <div class="checkbox-wrapper-23">
                                 <input type="checkbox" id="show_ip_route" name="selected_commands" class="checkbox-input" value="show_ip_route">
                                 <label for="show_ip_route" style="--size: 30px">
@@ -272,7 +273,6 @@
                                 </label>
                                 <span class ="label-text">show ip route</span>
                             </div>
-
                             <div class="checkbox-wrapper-23">
                                 <input type="checkbox" id="show_cdp_neighbors" name="selected_commands" class="checkbox-input" value="show_cdp_neighbors">
                                 <label for="show_cdp_neighbors" style="--size: 30px">
@@ -283,9 +283,7 @@
                                 <span class ="label-text">show cdp neighbors</span>
                             </div>
                         </div>
-                        
                         <div class="checkbox-wrapper-23 right">
-                            <!-- แท็ก checkbox ฝั่งขวา -->
                             <input type="checkbox" id="show_version" name="selected_commands" class="checkbox-input" value="show_version">
                             <label for="show_version" style="--size: 30px">
                                 <svg viewBox="0,0,50,50">
@@ -324,19 +322,12 @@
                                 <span class ="label-text">show ip protocols</span>
                             </div>
                         </div>
-                    </div>
+                    </div><br><br><br>
 
-                    
-                    <!-- เพิ่มส่วนนี้สำหรับคำสั่งอื่น ๆ -->
-                    
-                    
-                    
-                    
                     <input style="margin-left: 90%;" type="submit" value="Submit">
-                    
                 </form>
                 <div>
-                    <h2>Configuration Output</h2>
+                    <h2 style="color: #2e4ead;">CONFIGURATIONS OUTPUT</h2><br><br>
                     <pre>{{ config_data }}</pre>
                 </div>
                 
