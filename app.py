@@ -768,7 +768,7 @@ def show_config():
     if request.method == 'POST':
         device_name = request.form.get('device_name')
         selected_commands = request.form.getlist('selected_commands')  # Get all selected commands as a list
-        vlan_id = request.form.get('vlan_id')
+        vlan_id = request.form.get('vlan_id') ###########################
         print(vlan_id)
 
         for device in cisco_devices:
