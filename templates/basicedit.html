@@ -194,19 +194,16 @@
                         <div class="config-section">
                             <h2 style="color: #2e4ead; text-align: left;">Console Line Configuration</h2><br>
                             <select id="console_login_method" name="console_login_method" required>
-                                <option value="login">Choose the login method for the console line</option>
-                                <option value="login_local">Choose the login method for the console line (local authentication)</option>
+                                <option value="none">Choose the login method for the console line</option>
+                                <option value="login">login</option>
+                                <option value="login_local">local authentication</option>
+                                <option value="no_login">no login</option>
                             </select>
                             <br><br>
                             <input type="password" id="console_password" name="console_password" placeholder="Enter the console line password (min 3, max 20 )" minlength="3" maxlength="20">
                             <br>
                             <input type="number" id="console_timeout" name="console_timeout" placeholder="Enter timeout in minutes (1-60)">
                             <br>
-                            <label for="transport_input" style="text-align: left; font-weight: bold;">Transport Input</label>
-                            <select id="console_transport" name="console_transport" required>
-                                <option value="ssh">SSH</option>
-                                <option value="telnet">Telnet</option>
-                                <option value="all">All</option>
                             </select><br><br>
                             <div class="checkbox-wrapper-22" style="margin-left: 80%;">
                                 <label class="switch" for="enable_loggin_syn_con">
@@ -220,13 +217,15 @@
                         <div class="config-section">
                             <h2 style="color: #2e4ead; text-align: left;">VTY Line Configuration</h2><br>
                             <select id="vty_login_method" name="vty_login_method" required>
-                                <option value="login">Choose the login method for the VTY lines</option>
-                                <option value="login_local">Choose the login method for the VTY lines (local authentication)</option>
+                                <option value="none">Choose the login method for the VTY line</option>
+                                <option value="login">login</option>
+                                <option value="login_local">local authentication</option>
+                                <option value="no_login">no login</option>
                             </select>
                             <br><br>
                             <input type="password" id="vty_password" name="vty_password" placeholder="Enter the VTY line password (min 3, max 20)" minlength="3" maxlength="20">
                             <br>
-                            <input type="number" id="vty_timeout" name "vty_timeout" placeholder="Enter timeout in minutes (1-60)">
+                            <input type="number" id="vty_timeout" name="vty_timeout" placeholder="Enter timeout in minutes (1-60)">
                             <br>
                             <label for="vty_transport_input" style="text-align: left; font-weight: bold;">Transport Input</label>
                             <select id="vty_transport" name="vty_transport" required>
@@ -239,10 +238,10 @@
                             <input type="text" id="vty_range" name="vty_range" placeholder="Specify the VTY line range (e.g., 0 4 or 0 15)">
                             <div class="checkbox-wrapper-22" style="margin-left: 80%;">
                                 <label class="switch" for="enable_loggin_syn_vty">
-                                    <input type="checkbox" id="enable_loggin_vty" name="enable_loggin_vty" value="enable" />
+                                    <input type="checkbox" id="enable_loggin_syn_vty" name="enable_loggin_syn_vty" value="enable" />
                                     <div class="slider round"></div>
                                 </label>
-                                <label for="enable_loggin_syn">Enable Loggin Syncronous</label>
+                                <label for="enable_loggin_syn_vty">Enable Loggin Syncronous</label>
                             </div>
                             <br><br>
                         </div>

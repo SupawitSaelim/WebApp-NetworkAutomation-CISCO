@@ -114,8 +114,13 @@ def configure():
         console_login_method = request.form.get('console_login_method')
         console_password = request.form.get('console_password')
         console_timeout = request.form.get('console_timeout')
-        console_transport = request.form.get('console_transport')
         enable_loggin_syn_con = request.form.get('enable_loggin_syn_con')
+        vty_login_method = request.form.get('vty_login_method')
+        vty_password = request.form.get('vty_password')
+        vty_timeout = request.form.get('vty_timeout')
+        vty_transport = request.form.get('vty_transport')
+        vty_range = request.form.get('vty_range')
+        enable_loggin_syn_vty = request.form.get('enable_loggin_syn_vty')
 
         def parse_vlan_range(raw):
             ranges = raw.split(',')
@@ -427,36 +432,49 @@ def configure():
                         print(output)
                         net_connect.disconnect()
 
-                    if console_login_method:
-                        config_commands = []
+                    if console_login_method != 'none':
                         if console_login_method == 'login':
-                            config_commands.append('line console 0')
-                            config_commands.append('login local')
-                        elif console_login_method == 'login_local':
-                            config_commands.append('line console 0')
-                            config_commands.append('login local')
-
-                        if console_password:
-                            config_commands.append(f'password {console_password}')
-                        if console_timeout:
-                            config_commands.append(f'exec-timeout {console_timeout} 0')
-                        if console_transport:
-                            config_commands.append(f'transport input {console_transport}')
-                        if enable_loggin_syn_con == 'enable':
-                            config_commands.append('line console 0')
-                            config_commands.append('logging synchronous')
-                        else:
-                            config_commands.append('line console 0')
-                            config_commands.append('no logging synchronous')
-                        
-                        if config_commands:
                             net_connect = ConnectHandler(**device_info)
                             net_connect.enable()
-                            output = net_connect.send_config_set(config_commands)
+                            commands = ['line console 0', 'login']
+                            output = net_connect.send_config_set(commands)
                             print(output)
                             net_connect.disconnect()
-
-
+                        elif console_login_method == 'login_local':
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            commands = ['line console 0', 'login local']
+                            output = net_connect.send_config_set(commands)
+                            print(output)
+                            net_connect.disconnect()
+                        elif console_login_method == 'no_login':
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            commands = ['line console 0', 'no login']
+                            output = net_connect.send_config_set(commands)
+                            print(output)
+                            net_connect.disconnect()
+                    
+                    if console_password:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['line console 0', 'password ' + console_password])
+                        print(output)
+                        net_connect.disconnect()
+                    
+                    if console_timeout:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['line console 0', 'exec-timeout ' + console_timeout + ' 0'])
+                        print(output)
+                        net_connect.disconnect()
+                    
+                    if enable_loggin_syn_con == 'enable':
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_config_set(['line console 0', 'logging synchronous'])
+                        print(output)
+                        net_connect.disconnect()
 
                     if service_password_encryption == "enable":
                         net_connect = ConnectHandler(**device_info)
