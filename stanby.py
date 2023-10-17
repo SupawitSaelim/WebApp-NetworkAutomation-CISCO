@@ -834,8 +834,6 @@ def showconfig():
     return render_template('showconfig.html', cisco_devices=cisco_devices)
 
 
-
-
 def is_ssh_reachable(ip, username, password):
     try:
         ssh_client = paramiko.SSHClient()

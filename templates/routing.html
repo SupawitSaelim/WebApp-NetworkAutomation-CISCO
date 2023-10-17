@@ -223,7 +223,7 @@
                 <span class="icon"><i class="fas fa-cogs"></i></span>
                 <span class="title">Configurations</span>
                 </a></li>
-                <li><a href="routing">
+                <li><a href="routing" class="active">
                 <span class="icon"><i class="fas fa-cogs"></i></span>
                 <span class="title">Routing Configurations</span>
                 </a></li>
@@ -231,7 +231,7 @@
                 <span class="icon"><i class="fas fa-leaf"></i></span>
                 <span class="title">Erase configurations</span>
                 </a></li>
-                <li><a href="showconfig" class="active">
+                <li><a href="showconfig" >
                     <span class="icon"><i class="fas fa-leaf"></i></span>
                     <span class="title">Show configurations</span>
                 </a></li>
@@ -239,105 +239,85 @@
         </div>
         <div class="main_container">
             <div class="container">
-                <h1 style="text-align: left;color: #2e4ead;">SHOW CONFIGURATIONS</h1><br><br>
-                <form method="POST" action="/show-config" >
+                <h1 style="text-align: left;color: #2e4ead;">ROUTING CONFIGURATIONS</h1><br><br>
+                <form method="POST" action="/routing-config" >
                     <select name="device_name" required>
-                        <option value="" disabled selected>Select a device</option>
+                        <option value="" selected>Select a device</option>
                         {% for device in cisco_devices %}
                             <option value="{{ device.name }}">{{ device.name }}</option>
                         {% endfor %}
-                    </select>
+                    </select><br><br><br><br><br>
+                    <h2 style="color: #2e4ead; text-align: left;">DEFAULT ROUTE</h2><br>
+                    <input type="text" id="default_route" name="default_route" placeholder="Exit Interface or Next Hop (e.g., 'gi0/1' or '192.168.10.2')"><br><br>
+                    <h2 style="color: #2e4ead; text-align: left;">STATIC ROUTES</h2><br>
+                    <div class="input-container">
+                        <input type="text" id="network_static" name="network_static_1" placeholder="Destination Network (e.g., 192.168.10.0/24)">
+                        <input type="text" id="exit_static" name="exit_static_1" placeholder="Exit Interface or Next Hop (e.g., 'gi0/1' or '192.168.10.2')">
+                        <span id="warning_1" style="color: red;"></span>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" id="network_static" name="network_static_2" placeholder="Alternate Destination Network">
+                        <input type="text" id="exit_static" name="exit_static_2" placeholder="Alternate Exit Interface or Next Hop">
+                        <span id="warning_2" style="color: red;"></span>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" id="network_static" name="network_static_3" placeholder="Alternate Destination Network">
+                        <input type="text" id="exit_static" name="exit_static_3" placeholder="Alternate Exit Interface or Next Hop">
+                        <span id="warning_3" style="color: red;"></span>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" id="network_static" name="network_static_4" placeholder="Alternate Destination Network">
+                        <input type="text" id="exit_static" name="exit_static_4" placeholder="Alternate Exit Interface or Next Hop">
+                        <span id="warning_4" style="color: red;"></span>
+                    </div><br>
+                    <h2 style="color: #2e4ead; text-align: left;">REMOVE NETWORK ROUTE</h2><br>
+                    <div class="input-container">
+                      <input type="text" id="delete_route" name="delete_route" placeholder="Enter the Network to Be Removed (e.g., 192.168.10.0/24)">
+                    </div>
                     <br><br><br>
-                    <br><br>
-                    
-                    <div class="checkbox-container">
-                        <div class="checkbox-wrapper-23 left">
-                            <input type="checkbox" id="show_running_config" name="selected_commands" class="checkbox-input" value="show_running_config">
-                            <label for="show_running_config" style="--size: 30px">
-                                <svg viewBox="0,0,50,50">
-                                    <path d="M5 30 L 20 45 L 45 5"></path>
-                                </svg>
-                            </label>
-                            <span class="label-text">show running-config</span>
-                            <div class="checkbox-wrapper-23">
-                                <input type="checkbox" id="show_interfaces" name="selected_commands" class="checkbox-input" value="show_interfaces">
-                                <label for="show_interfaces" style="--size: 30px">
-                                    <svg viewBox="0,0,50,50">
-                                        <path d="M5 30 L 20 45 L 45 5"></path>
-                                    </svg>
-                                </label>
-                                <span class ="label-text">show interface</span>
-                            </div>
-                            <div class="checkbox-wrapper-23">
-                                <input type="checkbox" id="show_ip_route" name="selected_commands" class="checkbox-input" value="show_ip_route">
-                                <label for="show_ip_route" style="--size: 30px">
-                                    <svg viewBox="0,0,50,50">
-                                        <path d="M5 30 L 20 45 L 45 5"></path>
-                                    </svg>
-                                </label>
-                                <span class ="label-text">show ip route</span>
-                            </div>
-                            <div class="checkbox-wrapper-23">
-                                <input type="checkbox" id="show_cdp_neighbors" name="selected_commands" class="checkbox-input" value="show_cdp_neighbors">
-                                <label for="show_cdp_neighbors" style="--size: 30px">
-                                    <svg viewBox="0,0,50,50">
-                                        <path d="M5 30 L 20 45 L 45 5"></path>
-                                    </svg>
-                                </label>
-                                <span class ="label-text">show cdp neighbors</span>
-                            </div>
-                        </div>
-                        <div class="checkbox-wrapper-23 right">
-                            <input type="checkbox" id="show_version" name="selected_commands" class="checkbox-input" value="show_version">
-                            <label for="show_version" style="--size: 30px">
-                                <svg viewBox="0,0,50,50">
-                                    <path d="M5 30 L 20 45 L 45 5"></path>
-                                </svg>
-                            </label>
-                            <span class="label-text">show version</span>
-
-                            <div class="checkbox-wrapper-23">
-                                <input type="checkbox" id="show_ip_interface_brief" name="selected_commands" class="checkbox-input" value="show_ip_interface_brief">
-                                <label for="show_ip_interface_brief" style="--size: 30px">
-                                    <svg viewBox="0,0,50,50">
-                                        <path d="M5 30 L 20 45 L 45 5"></path>
-                                    </svg>
-                                </label>
-                                <span class ="label-text">show ip interface brief</span>
-                            </div>
-
-                            <div class="checkbox-wrapper-23">
-                                <input type="checkbox" id="show_vlan" name="selected_commands" class="checkbox-input" value="show_vlan">
-                                <label for="show_vlan" style="--size: 30px">
-                                    <svg viewBox="0,0,50,50">
-                                        <path d="M5 30 L 20 45 L 45 5"></path>
-                                    </svg>
-                                </label>
-                                <span class ="label-text">show vlan</span>
-                            </div>
-
-                            <div class="checkbox-wrapper-23">
-                                <input type="checkbox" id="show_ip_protocols" name="selected_commands" class="checkbox-input" value="show_ip_protocols">
-                                <label for="show_ip_protocols" style="--size: 30px">
-                                    <svg viewBox="0,0,50,50">
-                                        <path d="M5 30 L 20 45 L 45 5"></path>
-                                    </svg>
-                                </label>
-                                <span class ="label-text">show ip protocols</span>
-                            </div>
-                        </div>
-                    </div><br><br><br>
-
+                    <h2 style="color: #2e4ead; text-align: left;">OSPF CONFIGURATIONS</h2><br>
+                    <input type="number" id="process_id" name="process_id" placeholder="Process id:" min="1" max="65535">
+                    <input type="text" name="router_id" id="router_id" placeholder="Router-id:">
+                    <div class="input-container">
+                      <input type="text" id="network_ospf_1" name="network_ospf_1" placeholder="Network (e.g., 192.168.1.0 )">
+                      <input type="text" id="wildcard_ospf_1" name="wildcard_ospf_1" placeholder="Wildcard mask (e.g., 0.0.0.255) ">
+                      <input type="number" id="area_ospf_1" name="area_ospf_1" placeholder="Area: (e.g., 0)" min="0" max="4294967295">
+                    </div>
+                    <div class="input-container">
+                      <input type="text" id="network_ospf_2" name="network_ospf_2" placeholder="Alternate Network">
+                      <input type="text" id="wildcard_ospf_2" name="wildcard_ospf_2" placeholder="Wildcard mask">
+                      <input type="number" id="area_ospf_2" name="area_ospf_2" placeholder="Area" min="0" max="4294967295">
+                    </div>
+                    <div class="input-container">
+                      <input type="text" id="network_ospf_3" name="network_ospf_3" placeholder="Alternate Network">
+                      <input type="text" id="wildcard_ospf_3" name="wildcard_ospf_3" placeholder="Wildcard mask">
+                      <input type="number" id="area_ospf_3" name="area_ospf_3" placeholder="Area" min="0" max="4294967295">
+                    </div><br><br>
+                    <h3 style="color: #2e4ead; text-align: left;">REMOVE NETWORK OSPF</h3><br>
+                    <div class="input-container">
+                      <input type="text" id="network_ospf_remove" name="network_ospf_remove" placeholder="Network">
+                      <input type="text" id="wildcard_ospf_remove" name="wildcard_ospf_remove" placeholder="Wildcard mask">
+                      <input type="number" id="area_ospf_remove" name="area_ospf_remove" placeholder="Area" min="0" max="4294967295">
+                    </div>
+                    <h3 style="color: #2e4ead; text-align: left;">REMOVE OSPF PROCESS</h3><br>
+                    <div class="input-container">
+                      <input type="number" id="remove_process_id" name="remove_process_id" placeholder="Process id:" min="1" max="65535">
+                    </div>
                     <input style="margin-left: 90%;" type="submit" value="Submit">
                 </form>
-                <div>
-                    <h2 style="color: #2e4ead;">CONFIGURATIONS OUTPUT</h2><br><br>
-                    <pre>{{ config_data }}</pre>
-                </div>
-                
-                
             </div>
         </div>
     </div>
+    <script>
+      document.querySelector("form").addEventListener("submit", function (e) {
+          for (var i = 1; i <= 4; i++) {
+              var networkInput = document.getElementById("network_static_" + i).value;
+              if (networkInput && !networkInput.includes('/')) {
+                  e.preventDefault(); // Prevent form submission
+                  document.getElementById("warning_" + i).textContent = "Please include CIDR notation (e.g., /24).";
+              }
+          }
+      });
+  </script>
 </body>
 </html>

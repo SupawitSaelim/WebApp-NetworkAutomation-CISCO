@@ -538,6 +538,133 @@ def configure():
                 return '<script>alert("Failed to enter enable mode. Please ensure you set secret in device"); window.location.href="/basicedit";</script>'
             return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
 
+@app.route('/routing', methods=['POST', 'GET'])
+def routing():
+    return render_template('routing.html', cisco_devices=cisco_devices)
+
+@app.route('/routing-config', methods=['POST', 'GET'])
+def config_routing():
+    if request.method == 'POST':
+        device_name = request.form.get('device_name')
+        default_route = request.form.get('default_route')
+        delete_route = request.form.get('delete_route')
+        process_id = request.form.get('process_id')
+        router_id = request.form.get('router_id')
+        network_ospf_remove = request.form.get('network_ospf_remove')
+        wildcard_ospf_remove = request.form.get('wildcard_ospf_remove')
+        area_ospf_remove = request.form.get('area_ospf_remove')
+        remove_process_id = request.form.get('remove_process_id')
+    
+    for device in cisco_devices:
+        if device['name'] == device_name:
+            device_info = device['device_info']
+            try:
+                ip = device_info['ip']
+                if not is_ssh_reachable(ip, device_info['username'], device_info['password']):
+                    return '<script>alert("SSH connection failed. Make sure SSH is enabled and credentials are correct."); window.location.href="/basicedit";</script>'
+
+                def cidr_to_subnet_mask(cidr):
+                    try:
+                        cidr = int(cidr)
+                        if cidr < 0 or cidr > 32:
+                            return None  # Invalid CIDR notation
+
+                        subnet_mask = (0xffffffff << (32 - cidr)) & 0xffffffff
+                        return ".".join([str((subnet_mask >> 24) & 0xff),
+                                        str((subnet_mask >> 16) & 0xff),
+                                        str((subnet_mask >> 8) & 0xff),
+                                        str(subnet_mask & 0xff)])
+                    except ValueError:
+                        return None  
+                    
+                if default_route:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    default_route_commands = default_route.split(',')
+                    for route in default_route_commands:
+                        command = f'ip route 0.0.0.0 0.0.0.0 {route.strip()}'
+                        output = net_connect.send_config_set(command)
+                        print(output)
+                    net_connect.disconnect()
+
+                for i in range(1, 5): 
+                    network_static = request.form.get(f'network_static_{i}')
+                    exit_static = request.form.get(f'exit_static_{i}')
+                    
+                    if network_static and exit_static:
+                        network, cidr = network_static.split('/')
+                        subnet_mask = cidr_to_subnet_mask(int(cidr))
+                        
+                        if subnet_mask:
+                            route_command = f'ip route {network} {subnet_mask} {exit_static}'
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(route_command)
+                            print(output)
+                            net_connect.disconnect()
+                
+                if delete_route:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    command = f'no ip route'
+                    network, cidr = delete_route.split('/')
+                    subnet_mask = cidr_to_subnet_mask(int(cidr))
+                    if subnet_mask:
+                        command += f' {network} {subnet_mask}'
+                    output = net_connect.send_config_set(command)
+                    print(output)
+                    net_connect.disconnect()
+                
+                if process_id:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    commands = ['router ospf ' + process_id]
+                    if router_id:
+                        commands.append('router-id ' + router_id)
+                    for i in range(1,4):
+                        network_ospf = request.form.get(f'network_ospf_{i}')
+                        wildcard_ospf = request.form.get(f'wildcard_ospf_{i}')
+                        area_ospf = request.form.get(f'area_ospf_{i}')
+                        if network_ospf and wildcard_ospf and area_ospf:
+                            commands.append(f'network {network_ospf} {wildcard_ospf} area {area_ospf}')
+                    output = net_connect.send_config_set(commands)
+                    print(output)
+                    net_connect.disconnect()
+                
+                if network_ospf_remove and wildcard_ospf_remove and area_ospf_remove and process_id:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    command = ['router ospf ' + process_id]
+                    command.append(f'no network {network_ospf_remove} {wildcard_ospf_remove} area {area_ospf_remove}')
+                    output = net_connect.send_config_set(command)
+                    print(output)
+                    net_connect.disconnect()
+                
+                if remove_process_id:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    command = f'no router ospf {remove_process_id}'
+                    output = net_connect.send_config_set(command)
+                    print(output)
+                    net_connect.disconnect()
+
+                
+
+            
+
+                    
+
+
+
+
+
+                return '<script>alert("Configuration successful!"); window.location.href="/routing";</script>'
+            except Exception as e:
+                print(e)
+                if str(e).startswith('Failed to enter enable mode.'):
+                    return '<script>alert("Failed to enter enable mode. Please ensure you set secret in device"); window.location.href="/routing";</script>'
+                return '<script>alert("Something went wrong. Please try again!"); window.location.href="/routing";</script>'
+            
 @app.route('/eraseconfig', methods=['POST', 'GET'])
 def eraseconfig():
     return render_template('eraseconfig.html', cisco_devices=cisco_devices)
@@ -575,24 +702,9 @@ def erase_device():
 
     return redirect(url_for('eraseconfig'))
 
-
 @app.route('/showconfig', methods=['POST', 'GET'])
 def showconfig():
     return render_template('showconfig.html', cisco_devices=cisco_devices)
-
-
-
-
-def is_ssh_reachable(ip, username, password):
-    try:
-        ssh_client = paramiko.SSHClient()
-        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(ip, username=username, password=password, timeout=5)
-        ssh_client.close()
-        return True
-    except Exception as e:
-        print(e)
-        return False
 
 @app.route('/show-config', methods=['POST', 'GET'])
 def show_config():
@@ -671,7 +783,20 @@ def show_config():
 
     return render_template('showconfig.html', cisco_devices=cisco_devices)
 
-    
+
+def is_ssh_reachable(ip, username, password):
+    try:
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(ip, username=username, password=password, timeout=5)
+        ssh_client.close()
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
