@@ -142,7 +142,27 @@
                     <br><br>
                     <h2 style="color: #2e4ead; text-align: left;">IP Configuration</h2><br>
                     <input type="text" style="height: 80px;" name="ip_address" id="ip_address" placeholder="Enter IP addresses (e.g., 192.168.1.1/24 )">
-                    <br><br><br>
+                    <br><br>
+                    <h2 style="color: #2e4ead; text-align: left;">Switchport Mode</h2><br>
+                    <br><br>
+                    <div class="input-container">
+                        <div class="checkbox-wrapper-22" style="margin-left: 19%;">
+                            <label class="switch" for="trunk">
+                                <input type="checkbox" id="trunk" name="trunk" value="enable" />
+                                <div class="slider round"></div>
+                            </label>
+                            <label for="trunk">Mode Trunk</label>
+                        </div>
+                        <div class="checkbox-wrapper-22" style="margin-left: 38%;">
+                            <label class="switch" for="access">
+                                <input type="checkbox" id="access" name="access" value="enable" />
+                                <div class="slider round"></div>
+                            </label>
+                            <label for="access">Mode Access</label>
+                        </div>
+                    </div><br><br><br><br>
+                    <h2 style="color: #2e4ead; text-align: left;">Switchport Access VLAN</h2><br>
+                    <input type="text" style="height: 80px;" name="vlan_access" id="vlan_access" placeholder="VLAN ID:">
                     <div class="input-container">
                         <div class="checkbox-wrapper-22" style="margin-left: 20%;">
                             <label class="switch" for="activate">
@@ -406,6 +426,22 @@
                     deactivateCheckbox_vlan.addEventListener("change", function () {
                         if (deactivateCheckbox_vlan.checked) {
                             activateCheckbox_vlan.checked = false;
+                        }
+                    });
+                </script>
+                <script>
+                    const trunkCheckbox = document.getElementById('trunk');
+                    const accessCheckbox = document.getElementById('access');
+                
+                    trunkCheckbox.addEventListener('change', function () {
+                        if (trunkCheckbox.checked) {
+                            accessCheckbox.checked = false;
+                        }
+                    });
+                
+                    accessCheckbox.addEventListener('change', function () {
+                        if (accessCheckbox.checked) {
+                            trunkCheckbox.checked = false;
                         }
                     });
                 </script>

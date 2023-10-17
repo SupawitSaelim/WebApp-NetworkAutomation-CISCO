@@ -127,6 +127,12 @@ def configure():
         clock_timezone = request.form.get('clock_timezone')
         snmp_server = request.form.get('snmp_server')
         snmp_trap_level = request.form.get('snmp_trap_level')
+        switch_port_mode_trunk = request.form.get('trunk')
+        switch_port_mode_access = request.form.get('access')
+        vlan_access = request.form.get('vlan_access')
+
+        print(switch_port_mode_access,switch_port_mode_trunk)
+
 
 
         def parse_vlan_range(raw):
@@ -230,6 +236,38 @@ def configure():
                     elif deactivate_interfaces == "enable":
                         config_commands.append('interface range ' + interface)
                         config_commands.append('shutdown')
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+
+            if interface_list and switch_port_mode_trunk == "enable":
+                for interface in interface_list:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    config_commands = []
+                    config_commands.append('interface range ' + interface)
+                    config_commands.append('switchport mode trunk')
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+            elif interface_list and switch_port_mode_access == "enable":
+                for interface in interface_list:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    config_commands = []
+                    config_commands.append('interface range ' + interface)
+                    config_commands.append('switchport mode access')
+                    output = net_connect.send_config_set(config_commands)
+                    print(output)
+                    net_connect.disconnect()
+
+            if interface_list and vlan_access:
+                for interface in interface_list:
+                    net_connect = ConnectHandler(**device_info)
+                    net_connect.enable()
+                    config_commands = []
+                    config_commands.append('interface range ' + interface)
+                    config_commands.append('switchport access vlan ' + vlan_access)
                     output = net_connect.send_config_set(config_commands)
                     print(output)
                     net_connect.disconnect()

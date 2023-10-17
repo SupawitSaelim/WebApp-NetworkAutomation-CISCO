@@ -1,18 +1,20 @@
-RT>
-RT>terminal width 511
-RT>terminal length 0
-RT>
-RT>
-RT>enable
+
+Switch>
+Switch>terminal width 511
+Switch>terminal length 0
+Switch>
+Switch>
+Switch>enable
 Password: 
-RT#
-RT#
-RT#configure terminal
+Switch#
+Switch#
+Switch#configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
-RT(config)#
-RT(config)#no router rip
-RT(config)#
-RT(config)#end
-RT#
-RT#
-RT#exit
+Switch(config)#
+Switch(config)#interface range fa0/4-20
+Switch(config-if-range)#switchport mode trunk
+Switch(config-if-range)#
+Switch(config-if-range)#end
+Switch#
+Switch#
+Switch#exit
