@@ -134,7 +134,7 @@
                         <input type="password" id="secret_password" name="secret_password" placeholder="Secret password" minlength="3" maxlength="20">
                     </div><br><br>
                     <h2 style="color: #2e4ead; text-align: left;">Network Interface Configuration</h2><br>
-                    <input type="text" style="height: 120px;" name="interface" id="interface" placeholder="Example: gi0/0 or fa0/1-24 or gi1/0/1,gi1/0/2 or vlan 10-99">
+                    <input type="text" style="height: 120px;" name="interface" id="interface" placeholder="Example: gi0/0 or fa0/1-24 or gi1/0/1,gi1/0/2">
                     <br><br>
                     <h2 style="color: #2e4ead; text-align: left;">IP Configuration</h2><br>
                     <input type="text" style="height: 80px;" name="ip_address" id="ip_address" placeholder="Enter IP addresses (e.g., 192.168.1.1/24 )">
@@ -157,12 +157,28 @@
                     </div><br><br><br><br>
                     <h2 style="color: #2e4ead; text-align: left;">VLAN Configuration</h2><br>
                     <div class="input-container">
-                        <input type="number" id="vlan_id" name="vlan_id" placeholder="Create VLAN ID (e.g., 2-6)" min="1" max="4095">
+                        <input type="text" id="vlan_id" name="vlan_id" placeholder="Create VLAN ID (e.g., 2-6)"  max="4095">
                         <br><br>
                         <input type="text" id="vlan_name" name="vlan_name" placeholder="Enter VLAN Name" maxlength="25">
                     </div>
                     <h3 style="color: #2e4ead; text-align: left;">Delete VLAN</h3><br>
-                    <input type="number" id="vlan_id_delete" name="vlan_id_delete" placeholder="VLAN ID (e.g., 2-6)" min="1" max="4095">
+                    <input type="text" id="vlan_id_del" name="vlan_id_del" placeholder="VLAN ID (e.g., 2-6)" max="4095">
+                    <div class="input-container">
+                        <div class="checkbox-wrapper-22" style="margin-left: 20%;">
+                            <label class="switch" for="activate_vlan">
+                                <input type="checkbox" id="activate_vlan" name="activate_vlan" value="enable" />
+                                <div class="slider round"></div>
+                            </label>
+                            <label for="activate">Activate</label>
+                        </div>
+                        <div class="checkbox-wrapper-22" style="margin-left: 40%;">
+                            <label class="switch" for="deactivate_vlan">
+                                <input type="checkbox" id="deactivate_vlan" name="deactivate_vlan" value="enable" />
+                                <div class="slider round"></div>
+                            </label>
+                            <label for="deactivate">Deactivate</label>
+                        </div>
+                    </div
                     <br><br><br><br><br>
                     <h2 style="color: #2e4ead; text-align: left;">IP Default Gateway</h2><br>
                     <div class="input-container">
@@ -329,6 +345,7 @@
                     const interfaceInput = document.getElementById("interface");
                     const activateCheckbox = document.getElementById("activate");
                     const deactivateCheckbox = document.getElementById("deactivate");
+
                 
                     interfaceInput.addEventListener("input", function () {
                         if (interfaceInput.value.trim() !== "") {
@@ -352,6 +369,36 @@
                     deactivateCheckbox.addEventListener("change", function () {
                         if (deactivateCheckbox.checked) {
                             activateCheckbox.checked = false;
+                        }
+                    });
+                </script>
+                <script>
+                    const vlan_id = document.getElementById("vlan_id");
+                    const activateCheckbox_vlan = document.getElementById("activate_vlan");
+                    const deactivateCheckbox_vlan = document.getElementById("deactivate_vlan");
+
+                
+                    vlan_id.addEventListener("input", function () {
+                        if (interfaceInput.value.trim() !== "") {
+                            activateCheckbox_vlan.disabled = false;
+                            deactivateCheckbox_vlan.disabled = false;
+                        } else {
+                            activateCheckbox_vlan.disabled = true;
+                            deactivateCheckbox_vlan.disabled = true;
+                            activateCheckbox_vlan.checked = false;
+                            deactivateCheckbox_vlan.checked = false;
+                        }
+                    });
+                
+                    activateCheckbox_vlan.addEventListener("change", function () {
+                        if (activateCheckbox_vlan.checked) {
+                            deactivateCheckbox_vlan.checked = false;
+                        }
+                    });
+                
+                    deactivateCheckbox_vlan.addEventListener("change", function () {
+                        if (deactivateCheckbox_vlan.checked) {
+                            activateCheckbox_vlan.checked = false;
                         }
                     });
                 </script>

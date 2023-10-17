@@ -67,6 +67,126 @@
         border-radius: 50%;
     }
     </style>
+      <style>
+        .checkbox-wrapper-23 *,
+    .checkbox-wrapper-23 *:after,
+    .checkbox-wrapper-23 *:before {
+      box-sizing: border-box;
+    }
+    
+    .checkbox-wrapper-23 input {
+      position: absolute;
+      opacity: 0;
+    }
+    
+    .checkbox-wrapper-23 input:checked + label svg path {
+      stroke-dashoffset: 0;
+    }
+    
+    .checkbox-wrapper-23 input:focus + label {
+      transform: scale(1.03);
+    }
+    
+    .checkbox-wrapper-23 input + label {
+      display: inline-block;
+      vertical-align: middle;
+      border: 2px solid #333;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+    
+    .checkbox-wrapper-23 input + label:active {
+      transform: scale(1.05);
+      border-radius: 12px;
+    }
+    
+    .checkbox-wrapper-23 input + label svg {
+      pointer-events: none;
+      padding: 5%;
+    }
+    
+    .checkbox-wrapper-23 input + label svg path {      
+      fill: none;     
+      stroke: #333;
+      stroke-width: 4px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 101;
+      transition: all 250ms cubic-bezier(1,0,.37,.91);
+    }
+    
+    .label-text {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 10px; /* Adjust the margin as needed */
+    }
+
+    </style>
+    <style>
+        .checkbox-container {
+  display: flex;
+  justify-content: space-between;
+  width: 60%; /* ปรับความกว้างตามที่ต้องการ */
+  margin: 0 auto; /* จัดให้ตรงกลางของหน้าเว็บ */
+}
+
+.checkbox-wrapper-23.left,
+.checkbox-wrapper-23.right {
+  width: 45%; /* ปรับความกว้างตามที่ต้องการ */
+  text-align: left; /* จัดให้ checkbox อยู่ตรงกลาง */
+  margin: 10px; /* ระยะห่างระหว่าง checkbox แต่ละอัน */
+}
+
+.checkbox-wrapper-23 input {
+  position: absolute;
+  opacity: 0;
+}
+
+.checkbox-wrapper-23 input:checked + label svg path {
+  stroke-dashoffset: 0;
+}
+
+.checkbox-wrapper-23 input:focus + label {
+  transform: scale(1.03);
+}
+
+.checkbox-wrapper-23 input + label {
+  display: inline-block;
+  vertical-align: middle;
+  border: 2px solid #333;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.checkbox-wrapper-23 input + label:active {
+  transform: scale(1.05);
+  border-radius: 12px;
+}
+
+.checkbox-wrapper-23 input + label svg {
+  pointer-events: none;
+  padding: 5%;
+}
+
+.checkbox-wrapper-23 input + label svg path {
+  fill: none;
+  stroke: #333;
+  stroke-width: 4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 101;
+  transition: all 250ms cubic-bezier(1, 0, .37, .91);
+}
+
+    </style>
 </head>
 <body>
     <div class="wrapper">
@@ -112,6 +232,115 @@
         <div class="main_container">
             <div class="container">
                 <h1 style="text-align: center;color: #2e4ead;">SHOW CONFIGURATIONS</h1><br><br>
+                <form method="POST" action="/show-config" >
+                    <select name="device_name" required>
+                        <option value="" disabled selected>Select a device</option>
+                        {% for device in cisco_devices %}
+                            <option value="{{ device.name }}">{{ device.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br><br>
+                    <br><br>
+                    
+                    <div class="checkbox-container">
+                        <div class="checkbox-wrapper-23 left">
+                            <!-- แท็ก checkbox ฝั่งซ้าย -->
+                            <input type="checkbox" id="show_running_config" name="selected_commands" class="checkbox-input" value="show_running_config">
+                            <label for="show_running_config" style="--size: 30px">
+                                <svg viewBox="0,0,50,50">
+                                    <path d="M5 30 L 20 45 L 45 5"></path>
+                                </svg>
+                            </label>
+                            <span class="label-text">show running-config</span>
+
+                            <div class="checkbox-wrapper-23">
+                                <input type="checkbox" id="show_interfaces" name="selected_commands" class="checkbox-input" value="show_interfaces">
+                                <label for="show_interfaces" style="--size: 30px">
+                                    <svg viewBox="0,0,50,50">
+                                        <path d="M5 30 L 20 45 L 45 5"></path>
+                                    </svg>
+                                </label>
+                                <span class ="label-text">show interface</span>
+                            </div>
+
+                            <div class="checkbox-wrapper-23">
+                                <input type="checkbox" id="show_ip_route" name="selected_commands" class="checkbox-input" value="show_ip_route">
+                                <label for="show_ip_route" style="--size: 30px">
+                                    <svg viewBox="0,0,50,50">
+                                        <path d="M5 30 L 20 45 L 45 5"></path>
+                                    </svg>
+                                </label>
+                                <span class ="label-text">show ip route</span>
+                            </div>
+
+                            <div class="checkbox-wrapper-23">
+                                <input type="checkbox" id="show_cdp_neighbors" name="selected_commands" class="checkbox-input" value="show_cdp_neighbors">
+                                <label for="show_cdp_neighbors" style="--size: 30px">
+                                    <svg viewBox="0,0,50,50">
+                                        <path d="M5 30 L 20 45 L 45 5"></path>
+                                    </svg>
+                                </label>
+                                <span class ="label-text">show cdp neighbors</span>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-wrapper-23 right">
+                            <!-- แท็ก checkbox ฝั่งขวา -->
+                            <input type="checkbox" id="show_version" name="selected_commands" class="checkbox-input" value="show_version">
+                            <label for="show_version" style="--size: 30px">
+                                <svg viewBox="0,0,50,50">
+                                    <path d="M5 30 L 20 45 L 45 5"></path>
+                                </svg>
+                            </label>
+                            <span class="label-text">show version</span>
+
+                            <div class="checkbox-wrapper-23">
+                                <input type="checkbox" id="show_ip_interface_brief" name="selected_commands" class="checkbox-input" value="show_ip_interface_brief">
+                                <label for="show_ip_interface_brief" style="--size: 30px">
+                                    <svg viewBox="0,0,50,50">
+                                        <path d="M5 30 L 20 45 L 45 5"></path>
+                                    </svg>
+                                </label>
+                                <span class ="label-text">show ip interface brief</span>
+                            </div>
+
+                            <div class="checkbox-wrapper-23">
+                                <input type="checkbox" id="show_vlan" name="selected_commands" class="checkbox-input" value="show_vlan">
+                                <label for="show_vlan" style="--size: 30px">
+                                    <svg viewBox="0,0,50,50">
+                                        <path d="M5 30 L 20 45 L 45 5"></path>
+                                    </svg>
+                                </label>
+                                <span class ="label-text">show vlan</span>
+                            </div>
+
+                            <div class="checkbox-wrapper-23">
+                                <input type="checkbox" id="show_ip_protocols" name="selected_commands" class="checkbox-input" value="show_ip_protocols">
+                                <label for="show_ip_protocols" style="--size: 30px">
+                                    <svg viewBox="0,0,50,50">
+                                        <path d="M5 30 L 20 45 L 45 5"></path>
+                                    </svg>
+                                </label>
+                                <span class ="label-text">show ip protocols</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <!-- เพิ่มส่วนนี้สำหรับคำสั่งอื่น ๆ -->
+                    
+                    
+                    
+                    
+                    <input style="margin-left: 90%;" type="submit" value="Submit">
+                    
+                </form>
+                <div>
+                    <h2>Configuration Output</h2>
+                    <pre>{{ config_data }}</pre>
+                </div>
+                
+                
             </div>
         </div>
     </div>

@@ -106,6 +106,35 @@ def configure():
         ip_addresses = request.form.get('ip_address')
         active_interfaces = request.form.get('activate')
         deactivate_interfaces = request.form.get('deactivate')
+        raw_vlan_id = request.form.get('vlan_id')
+        vlan_name = request.form.get('vlan_name')
+        raw_vlan_id_del = request.form.get('vlan_id_del')
+        active_vlan = request.form.get('activate_vlan')
+        deactive_vlan = request.form.get('deactivate_vlan')
+        console_login_method = request.form.get('console_login_method')
+        console_password = request.form.get('console_password')
+        console_timeout = request.form.get('console_timeout')
+        console_transport = request.form.get('console_transport')
+        enable_loggin_syn_con = request.form.get('enable_loggin_syn_con')
+
+        def parse_vlan_range(raw):
+            ranges = raw.split(',')
+            result = []
+            for r in ranges:
+                if r.strip():  # Check if the string is not empty or only contains whitespace
+                    if '-' in r:
+                        start, end = map(int, r.split('-'))
+                        result.extend(range(start, end + 1))
+                    else:
+                        try:
+                            result.append(int(r))
+                        except ValueError:
+                            pass
+            return result
+
+        
+        vlan_id_list = parse_vlan_range(raw_vlan_id)
+        vlan_id_del_list = parse_vlan_range(raw_vlan_id_del)
 
         def cidr_to_subnet_mask(cidr):
             try:
@@ -134,10 +163,6 @@ def configure():
                 if subnet_mask:
                     ip_list.append(ip)
                     subnet_mask_list.append(subnet_mask)
-
-        print("Interfaces:", interface_list)
-        print("IP Addresses:", ip_list)
-        print("Subnet Masks:", subnet_mask_list)
 
         # many hostname
         if many_hostname:
@@ -207,6 +232,34 @@ def configure():
                                         elif deactivate_interfaces == "enable":
                                             config_commands.append('interface range ' + interface)
                                             config_commands.append('shutdown')
+                                        output = net_connect.send_config_set(config_commands)
+                                        print(output)
+                                        net_connect.disconnect()
+
+                                if vlan_id_list :
+                                    for vlan_id in vlan_id_list:
+                                        net_connect = ConnectHandler(**device_info)
+                                        net_connect.enable()
+                                        config_commands = []
+                                        config_commands.append('vlan ' + str(vlan_id))
+                                        if vlan_name:
+                                            config_commands.append('name ' + vlan_name + '_' + str(vlan_id))
+                                        if active_vlan == "enable":
+                                            config_commands.append('no shutdown')
+                                        elif deactive_vlan == "enable":
+                                            config_commands.append('shutdown')
+                                        else:
+                                            pass
+                                        output = net_connect.send_config_set(config_commands)
+                                        print(output)
+                                        net_connect.disconnect()
+                                
+                                if vlan_id_del_list:
+                                    for vlan_id_del in vlan_id_del_list:
+                                        net_connect = ConnectHandler(**device_info)
+                                        net_connect.enable()
+                                        config_commands = []
+                                        config_commands.append('no vlan ' + str(vlan_id_del))
                                         output = net_connect.send_config_set(config_commands)
                                         print(output)
                                         net_connect.disconnect()
@@ -331,6 +384,34 @@ def configure():
                             print(output)
                             net_connect.disconnect()
 
+                    if vlan_id_list :
+                        for vlan_id in vlan_id_list:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            config_commands = []
+                            config_commands.append('vlan ' + str(vlan_id))
+                            if vlan_name:
+                                config_commands.append('name ' + vlan_name + '_' + str(vlan_id))
+                            if active_vlan == "enable":
+                                config_commands.append('no shutdown')
+                            elif deactive_vlan == "enable":
+                                config_commands.append('shutdown')
+                            else:
+                                pass
+                            output = net_connect.send_config_set(config_commands)
+                            print(output)
+                            net_connect.disconnect()
+                    
+                    if vlan_id_del_list:
+                        for vlan_id_del in vlan_id_del_list:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            config_commands = []
+                            config_commands.append('no vlan ' + str(vlan_id_del))
+                            output = net_connect.send_config_set(config_commands)
+                            print(output)
+                            net_connect.disconnect()
+                            
                     if default_gateway:
                         net_connect = ConnectHandler(**device_info)
                         net_connect.enable()
@@ -345,6 +426,37 @@ def configure():
                             ['username ' + new_username + ' privilege ' + level_privilege + ' secret ' + new_password])
                         print(output)
                         net_connect.disconnect()
+
+                    if console_login_method:
+                        config_commands = []
+                        if console_login_method == 'login':
+                            config_commands.append('line console 0')
+                            config_commands.append('login local')
+                        elif console_login_method == 'login_local':
+                            config_commands.append('line console 0')
+                            config_commands.append('login local')
+
+                        if console_password:
+                            config_commands.append(f'password {console_password}')
+                        if console_timeout:
+                            config_commands.append(f'exec-timeout {console_timeout} 0')
+                        if console_transport:
+                            config_commands.append(f'transport input {console_transport}')
+                        if enable_loggin_syn_con == 'enable':
+                            config_commands.append('line console 0')
+                            config_commands.append('logging synchronous')
+                        else:
+                            config_commands.append('line console 0')
+                            config_commands.append('no logging synchronous')
+                        
+                        if config_commands:
+                            net_connect = ConnectHandler(**device_info)
+                            net_connect.enable()
+                            output = net_connect.send_config_set(config_commands)
+                            print(output)
+                            net_connect.disconnect()
+
+
 
                     if service_password_encryption == "enable":
                         net_connect = ConnectHandler(**device_info)
@@ -440,6 +552,82 @@ def is_ssh_reachable(ip, username, password):
         print(e)
         return False
 
+@app.route('/show-config', methods=['POST', 'GET'])
+def show_config():
+    if request.method == 'POST':
+        device_name = request.form.get('device_name')
+        selected_commands = request.form.getlist('selected_commands')  # Get all selected commands as a list
+
+        for device in cisco_devices:
+            if device['name'] == device_name:
+                device_info = device['device_info']
+                try:
+                    config_data = ""
+
+                    if "show_running_config" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show running-config')
+                        net_connect.disconnect()
+                        config_data += "===== show running config =====\n" + output + "\n"
+
+                    if "show_version" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show version')
+                        net_connect.disconnect()
+                        config_data += "===== show version =====\n" + output + "\n"
+
+                    if "show_interfaces" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show interfaces')
+                        net_connect.disconnect()
+                        config_data += "===== show interfaces =====\n" + output + "\n"
+                    
+                    if "show_ip_interface_brief" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show ip interface brief')
+                        net_connect.disconnect()
+                        config_data += "===== show ip interface brief =====\n" + output + "\n"
+
+                    if "show_ip_route" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show ip route')
+                        net_connect.disconnect()
+                        config_data += "===== show ip route =====\n" + output + "\n"
+
+                    if "show_vlan" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show vlan')
+                        net_connect.disconnect()
+                        config_data += "===== show vlan =====\n" + output + "\n"
+
+                    if "show_cdp_neighbors" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show cdp neighbors')
+                        net_connect.disconnect()
+                        config_data += "===== show cdp neighbors =====\n" + output + "\n" 
+
+                    if "show_ip_protocols" in selected_commands:
+                        net_connect = ConnectHandler(**device_info)
+                        net_connect.enable()
+                        output = net_connect.send_command('show ip protocols')
+                        net_connect.disconnect()
+                        config_data += "===== show ip protocols =====\n" + output + "\n"             
+
+                    return render_template('showconfig.html', cisco_devices=cisco_devices, config_data=config_data)
+
+                except Exception as e:
+                    print(e)
+                    error_message = "Failed to retrieve configuration. Please try again."
+                    return render_template('showconfig.html', cisco_devices=cisco_devices, error_message=error_message)
+
+    return render_template('showconfig.html', cisco_devices=cisco_devices)
 
     
 if __name__ == '__main__':

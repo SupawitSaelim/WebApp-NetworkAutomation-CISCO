@@ -11,7 +11,7 @@ SWITCH-TEST-AUTOMATION#
 SWITCH-TEST-AUTOMATION#configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 SWITCH-TEST-AUTOMATI(config)#
-SWITCH-TEST-AUTOMATI(config)#ip default-gateway 10.4.15.1
+SWITCH-TEST-AUTOMATI(config)#no vlan 99
 SWITCH-TEST-AUTOMATI(config)#
 SWITCH-TEST-AUTOMATI(config)#end
 SWITCH-TEST-AUTOMATION#
