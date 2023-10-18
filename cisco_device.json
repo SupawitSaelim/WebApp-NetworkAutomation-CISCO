@@ -1,9 +1,9 @@
 [
     {
-        "name": "Router",
+        "name": "Test-from-automation",
         "device_info": {
             "device_type": "cisco_ios",
-            "ip": "10.4.15.32",
+            "ip": "10.4.15.31",
             "username": "admin",
             "password": "admin",
             "secret": "admin",
@@ -11,10 +11,10 @@
         }
     },
     {
-        "name": "Switch",
+        "name": "router",
         "device_info": {
             "device_type": "cisco_ios",
-            "ip": "10.4.15.31",
+            "ip": "10.4.15.32",
             "username": "admin",
             "password": "admin",
             "secret": "admin",

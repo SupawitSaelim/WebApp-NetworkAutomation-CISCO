@@ -1,29 +1,18 @@
-
-Switch>
-Switch>terminal width 511
-Switch>terminal length 0
-Switch>
-Switch>
-Switch>enable
+RT>
+RT>terminal width 511
+RT>terminal length 0
+RT>
+RT>
+RT>enable
 Password: 
-Switch#
-Switch#
-Switch#show vlan id 123
-
-VLAN Name                             Status    Ports
----- -------------------------------- --------- -------------------------------
-123  VLAN0123                         active    Fa0/21, Fa0/22, Fa0/23, Fa0/24, Fa0/25
-
-VLAN Type  SAID       MTU   Parent RingNo BridgeNo Stp  BrdgMode Trans1 Trans2
----- ----- ---------- ----- ------ ------ -------- ---- -------- ------ ------
-123  enet  100123     1500  -      -      -        -    -        0      0   
-
-Remote SPAN VLAN
-----------------
-Disabled
-
-Primary Secondary Type              Ports
-------- --------- ----------------- ------------------------------------------
-
-Switch#
-Switch#exit
+RT#
+RT#
+RT#show ip interface brief
+Interface                  IP-Address      OK? Method Status                Protocol
+Embedded-Service-Engine0/0 unassigned      YES unset  ********istratively down down    
+GigabitEthernet0/0         10.4.15.32      YES manual up                    up      
+GigabitEthernet0/1         192.168.1.1     YES manual down                  down    
+Serial0/0/0                unassigned      YES unset  ********istratively down down    
+Serial0/0/1                unassigned      YES unset  ********istratively down down    
+RT#
+RT#exit
