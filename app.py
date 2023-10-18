@@ -98,7 +98,6 @@ def configure():
         new_password = request.form.get('new_password')
         level_privilege = request.form.get('level_pri')
         service_password_encryption = request.form.get('password_encryption')
-        enable_snmp = request.form.get('enable_snmp')
         save_config = request.form.get('save_config')
         default_gateway = request.form.get('default_gateway')
         enable_cdp = request.form.get('enable_cdp')
@@ -130,6 +129,10 @@ def configure():
         switch_port_mode_trunk = request.form.get('trunk')
         switch_port_mode_access = request.form.get('access')
         vlan_access = request.form.get('vlan_access')
+        enable_snmp_ro = request.form.get('enable_snmp_ro')
+        enable_snmp_rw = request.form.get('enable_snmp_rw')
+        snmp_ro_text = request.form.get("snmp_ro_text")
+        snmp_rw_text = request.form.get("snmp_rw_text")
 
         print(switch_port_mode_access,switch_port_mode_trunk)
 
@@ -503,10 +506,20 @@ def configure():
                 print(output)
                 net_connect.disconnect()
 
-            if enable_snmp == "enable":
+            if enable_snmp_ro == "enable":
                 net_connect = ConnectHandler(**device_info)
                 net_connect.enable()
-                output = net_connect.send_config_set(['snmp-server community public RO'])
+                snmp_community_ro = "snmp-server community " + snmp_ro_text + " RO"  # เพิ่ม snmp_ro_text
+                output = net_connect.send_config_set([snmp_community_ro])
+                print(output)
+                net_connect.disconnect()
+            
+            if enable_snmp_rw == "enable":
+                net_connect = ConnectHandler(**device_info)
+                net_connect.enable()
+                snmp_community_rw = "snmp-server community " + snmp_rw_text + " RW"  # เพิ่ม snmp_rw_text
+                output = net_connect.send_config_set([snmp_community_rw])
+                output = net_connect.send_config_set(['snmp-server community private RW'])
                 print(output)
                 net_connect.disconnect()
 

@@ -301,11 +301,20 @@
                             <label for="password_encryption">Enable service password-encryption</label>
                         </div>
                         <div class="checkbox-wrapper-22" style="margin-left: 10%;">
-                            <label class="switch" for="enable_snmp">
-                                <input type="checkbox" id="enable_snmp" name="enable_snmp" value="enable" />
+                            <label class="switch" for="enable_snmp_ro">
+                                <input type="checkbox" id="enable_snmp_ro" name="enable_snmp_ro" value="enable" />
                                 <div class="slider round"></div>
                             </label>
-                            <label for="enable_snmp">Enable SNMP</label>
+                            <input type="text" id="snmp_ro_text" name="snmp_ro_text" placeholder="Name Community" />
+                            <label for="enable_snmp_ro">Enable SNMP RO</label>
+                        </div>
+                        <div class="checkbox-wrapper-22" style="margin-left: 10%;">
+                            <label class="switch" for="enable_snmp_rw">
+                                <input type="checkbox" id="enable_snmp_rw" name="enable_snmp_rw" value="enable" />
+                                <div class="slider round"></div>
+                            </label>
+                            <input type="text" id="snmp_ro_text" name="snmp_rw_text" placeholder="Name Community" />
+                            <label for="enable_snmp_rw">Enable SNMP RW</label>
                         </div>
                         <div class="checkbox-wrapper-22" style="margin-left: 15%;">
                             <label class="switch" for="enable_cdp">
