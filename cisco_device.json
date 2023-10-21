@@ -1,31 +1,9 @@
 [
     {
-        "name": "switch-l2",
+        "name": "Test-from-Automation",
         "device_info": {
             "device_type": "cisco_ios",
             "ip": "10.4.15.31",
-            "username": "admin",
-            "password": "admin",
-            "secret": "admin",
-            "session_log": "output.log"
-        }
-    },
-    {
-        "name": "router",
-        "device_info": {
-            "device_type": "cisco_ios",
-            "ip": "10.4.15.32",
-            "username": "admin",
-            "password": "admin",
-            "secret": "admin",
-            "session_log": "output.log"
-        }
-    },
-    {
-        "name": "switch-l3",
-        "device_info": {
-            "device_type": "cisco_ios",
-            "ip": "10.4.15.30",
             "username": "admin",
             "password": "admin",
             "secret": "admin",
