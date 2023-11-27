@@ -3,6 +3,7 @@ import json
 import os
 from netmiko import ConnectHandler
 import paramiko
+import threading
 
 app = Flask(__name__, template_folder='templates')
 
@@ -537,33 +538,47 @@ def configure():
                 print(output)
                 net_connect.disconnect()
 
+
+        def configure_device(name, cisco_devices, json_file_path):
+            try:
+                for device in cisco_devices:
+                    if device['name'] == name:
+                        device_info = device['device_info']
+                        ip = device_info['ip']
+
+                        if not is_ssh_reachable(ip, device_info['username'], device_info['password']):
+                            return False
+                        
+                        configuration(device_info, device)
+
+                with open(json_file_path, 'w') as f:
+                    json.dump(cisco_devices, f, indent=4)
+
+                return True
+            except Exception as e:
+                print(e)
+                if str(e).startswith('Failed to enter enable mode.'):
+                    return '<script>alert("Failed to enter enable mode. Please ensure you set secret in device"); window.location.href="/basicedit";</script>'
+                return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
+
+
         # many hostname
         if many_hostname:
+            thread_list = []
             many_names = [name.strip() for name in many_hostname.split(',')]
             print(many_names)
+
             try:
                 for name in many_names:
-                    print(name)
-                    try:
-                        for device in cisco_devices:
-                            if device['name'] == name:
-                                device_info = device['device_info']
-                                ip = device_info['ip']
+                    t = threading.Thread(target=configure_device, args=(name, cisco_devices, json_file_path))
+                    thread_list.append(t)
+                    t.start()
 
-                                if not is_ssh_reachable(ip, device_info['username'], device_info['password']):
-                                    return '<script>alert("SSH connection failed. Make sure SSH is enabled and credentials are correct."); window.location.href="/basicedit";</script>'
-                                
-                                configuration(device_info, device)
+                for thread in thread_list:
+                    thread.join()
 
-                        with open(json_file_path, 'w') as f:
-                            json.dump(cisco_devices, f, indent=4)
-
-                    except Exception as e:
-                        print(e)
-                        if str(e).startswith('Failed to enter enable mode.'):
-                            return '<script>alert("Failed to enter enable mode. Please ensure you set secret in device"); window.location.href="/basicedit";</script>'
-                        return '<script>alert("Something went wrong. Please try again!"); window.location.href="/basicedit";</script>'
                 return '<script>alert("Configuration successful!"); window.location.href="/basicedit";</script>'
+
             except Exception as e:
                 print(e)
 
